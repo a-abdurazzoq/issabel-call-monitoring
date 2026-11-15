@@ -106,6 +106,16 @@ $arrLangModule = array(
     "The agent has no phone device" => "У оператора нет телефонного устройства",
     "The listening call has ended"  => "Звонок прослушки уже завершён",
     "Failed to switch the listening mode" => "Не удалось переключить режим прослушки",
+    "Answer and press 1"
+        => "Ответьте и нажмите 1",
+    "On an external number you will hear a beep after you answer: press 1 to start listening. Voicemail cannot do that, so the conversation never gets there."
+        => "На внешнем номере после ответа вы услышите сигнал: нажмите 1, чтобы начать прослушку. Голосовая почта этого не сделает, поэтому разговор туда не попадёт.",
+    "Press 1 on the phone first"
+        => "Сначала нажмите 1 на телефоне",
+    "Answer the call first"
+        => "Сначала ответьте на звонок",
+    "Listening on an external number needs the confirmation dialplan: run install.sh on the PBX"
+        => "Для прослушки через внешний номер нужен сценарий подтверждения: запустите install.sh на АТС",
 
     // Состояния операторов очереди
     "Available"                     => "Свободен",

@@ -15,7 +15,7 @@
         <p align="Justify">Agents show their state, the calls taken and how long they have been in that state. A row turns red after a long pause or a long call. The sort icon next to "Agents" switches between sorting by state and by number. Waiting customers turn yellow and then red the longer they wait.</p>
 
         <h2>Listening to a call</h2>
-        <p align="Justify">The headphones icon appears next to an agent who is in a call. Enter the number to be called at (your extension or an external number) and choose a mode: Listen (nobody hears you), Whisper (only the agent hears you) or Barge in (both hear you). Answer the call to start listening. The bar at the bottom switches the mode or hangs up; during the call the phone keys 4, 5 and 6 switch the mode as well.</p>
+        <p align="Justify">The headphones icon appears next to an agent who is in a call. Enter the number to be called at (your extension or an external number) and choose a mode: Listen (nobody hears you), Whisper (only the agent hears you) or Barge in (both hear you). Answer the call to start listening. On an external number you hear a beep after the answer: press 1, otherwise the call is hung up, so voicemail never gets the conversation. The bar at the bottom switches the mode or hangs up; during the call the phone keys 4, 5 and 6 switch the mode as well.</p>
 
         <div class="hlp_figures"><img src="../modules/{$node_id}/images/hlp_operator_panel.png" border="0" />
 	<p>Figure 1</p></div>

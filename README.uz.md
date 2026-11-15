@@ -51,6 +51,9 @@ Soʻng Issabelda **PBX → Call Monitoring** boʻlimini oching.
 
 Oʻrnatuvchi modulni `/var/www/html/modules/control_panel/` ga koʻchiradi,
 menyu bandini qoʻshadi va egasini `asterisk:asterisk` qilib belgilaydi.
+Tashqi raqam orqali tinglash uchun u Asteriskka kichik ssenariy ham oʻrnatadi
+(`/etc/asterisk/extensions_cp_spy.conf`, `extensions_custom.conf` dan
+ulanadi) va dialplanni qayta yuklaydi.
 Standart holatda menyu bandini faqat *administrator* guruhi koʻradi. Boshqa
 guruhlarga ruxsat Issabel guruh huquqlarida beriladi.
 
@@ -73,6 +76,9 @@ yuklang.
 ```sh
 rm -rf /var/www/html/modules/control_panel
 issabel-menuremove control_panel
+rm -f /etc/asterisk/extensions_cp_spy.conf
+sed -i '/^#include extensions_cp_spy.conf$/d' /etc/asterisk/extensions_custom.conf
+asterisk -rx "dialplan reload"
 ```
 
 ## Foydalanish
@@ -139,8 +145,9 @@ almashtiradi.
      eshitmaydi.
    - **Maslahat berish**: sizni faqat operator eshitadi.
    - **Aralashish**: uch kishilik suhbat, sizni ikkalasi ham eshitadi.
-4. Qoʻngʻiroqqa javob bering. Operator qoʻngʻirogʻi tugashi bilan tinglash
-   ham tugaydi.
+4. Qoʻngʻiroqqa javob bering. Tashqi raqamda signal eshitasiz: tinglashni
+   boshlash uchun **1** ni bosing. Operator qoʻngʻirogʻi tugashi bilan
+   tinglash ham tugaydi.
 
 Pastdagi panel qoʻngʻiroq holatini koʻrsatadi. Undan rejimni almashtirish va
 oʻz qoʻngʻirogʻingizni **yakunlash** mumkin, masalan notoʻgʻri raqam
@@ -151,19 +158,22 @@ qilishni taklif qiladi.
 
 ![Tinglash paneli](docs/images/uz/listen-bar.png)
 
-> **Tashqi raqamlar va ovozli pochta.** Qoʻngʻiroqqa javob berilishi bilan,
-> odam yoki avtomat javob berganidan qatʼi nazar, Asterisk suhbatni uzata
-> boshlaydi.
+> **Tashqi raqamlar va ovozli pochta.** Qoʻngʻiroqqa siz emas, avtomat javob
+> berishi mumkin: mobil operatorning ovozli pochtasi yoki yoʻnaltirish.
 >
 > - **Oʻz ichki raqamingiz:** panel toʻgʻridan-toʻgʻri telefoningizga,
 >   yoʻnaltirish va ovozli pochtasiz qoʻngʻiroq qiladi, shuning uchun xavf
 >   yoʻq.
 > - **Tashqi raqam:** qoʻngʻiroq chiquvchi marshrutlar orqali ketadi va
->   20 soniyagacha jiringlaydi. Agar sizning oʻrningizga mobil operatorning
->   ovozli pochtasi javob bersa yoki yoʻnaltirish ishlasa, suhbat u yerda
->   yozib olinadi yoki uni begona odam eshitadi. Tinglash uchun ishlatiladigan
->   mobil telefonda ovozli pochta va yoʻnaltirishlarni oʻchiring (koʻpchilik
->   GSM tarmoqlarida `##002#`).
+>   20 soniyagacha jiringlaydi. Javob berganingizdan keyin signal eshitasiz,
+>   tinglash esa faqat **1** ni bosganingizda boshlanadi. Ovozli pochta 1 ni
+>   bosmaydi, shuning uchun uchta signaldan keyin qoʻngʻiroq yakunlanadi va
+>   suhbat u yerga tushmaydi. Qoʻngʻiroq boshqa odamga yoʻnaltirilsa, u 1 ni
+>   bosishi mumkin, shuning uchun tinglash uchun ishlatiladigan mobil
+>   telefonda yoʻnaltirishlarni oʻchiring (koʻpchilik GSM tarmoqlarida
+>   `##002#`).
+> - Tasdiqlash uchun `install.sh` oʻrnatadigan ssenariy kerak. Usiz panel
+>   tashqi raqamlarga qoʻngʻiroq qilmaydi (oʻz ichki raqamingiz ishlaydi).
 
 ## Sozlash
 

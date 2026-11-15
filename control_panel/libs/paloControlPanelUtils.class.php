@@ -295,12 +295,26 @@ class paloControlPanelUtils
      * the agent's phone, as FreePBX's own targeted-chanspy does:
      *   q  no beep / channel name, d  keys 4/5/6 on the supervisor's phone
      *   switch listen / whisper / barge, E  end when the agent's call ends.
+     * An own extension runs ChanSpy right after the answer. An external number
+     * goes through the dialplan context cp-spy-confirm: the supervisor hears a
+     * beep and must press 1, so voicemail never receives the conversation.
      * A session is identified by the uniqueid given to the originated channel
      * (ChannelId), so it can be checked, switched and hung up later.
      **************************************************************************/
 
     private static $_spyModes = array('listen' => '', 'whisper' => 'w', 'barge' => 'B');
     private static $_spyKeys  = array('listen' => '4', 'whisper' => '5', 'barge' => '6');
+
+    // Dialplan context of asterisk/extensions_cp_spy.conf
+    const SPY_CONFIRM_CONTEXT = 'cp-spy-confirm';
+
+    // Whether Asterisk has loaded the confirmation context
+    private function _hasConfirmContext($ami)
+    {
+        $r = $ami->Command('dialplan show s@'.self::SPY_CONFIRM_CONTEXT);
+        $data = (is_array($r) && isset($r['data'])) ? $r['data'] : '';
+        return strpos($data, "Context '".self::SPY_CONFIRM_CONTEXT."'") !== FALSE;
+    }
 
     static function validSpyId($uid)
     {
@@ -407,27 +421,41 @@ class paloControlPanelUtils
          * record the conversation). Anything else goes out through the
          * outbound routes; the shorter timeout keeps it ahead of mobile
          * voicemail. */
-        $targetDials = preg_match('/^[0-9]+$/', $target) ? $this->_deviceDialStrings($ami, $target) : array();
-        if (count($targetDials) > 0) {
-            $channel = $targetDials[0];
-            $timeout = 30000;
-        } else {
-            $channel = 'Local/'.$target.'@from-internal';
-            $timeout = 20000;
-        }
-
         $uid = 'cpspy-'.time().'-'.mt_rand(100000, 999999);
         $label = str_replace(array('"', '<', '>'), '', _tr('Listen')).' '.$agent;
-        $r = $ami->send_request('Originate', array(
-            'Channel'        => $channel,
-            'Application'    => 'ChanSpy',
-            'Data'           => $spyPrefix.'-,qdE'.self::$_spyModes[$mode],
+        $request = array(
+            'Channel'        => NULL,
             'CallerID'       => '"'.$label.'" <'.$agent.'>',
-            'Timeout'        => $timeout,
+            'Timeout'        => NULL,
             'Async'          => 'true',
             'ChannelId'      => $uid,
             'OtherChannelId' => $uid.'-2',
-        ));
+        );
+        $targetDials = preg_match('/^[0-9]+$/', $target) ? $this->_deviceDialStrings($ami, $target) : array();
+        if (count($targetDials) > 0) {
+            $request['Channel'] = $targetDials[0];
+            $request['Timeout'] = 30000;
+            $request['Application'] = 'ChanSpy';
+            $request['Data'] = $spyPrefix.'-,qdE'.self::$_spyModes[$mode];
+        } else {
+            /* External number: the call goes to the dialplan context
+             * cp-spy-confirm (installed by install.sh), which starts ChanSpy
+             * only after the supervisor presses 1. Without that context the
+             * number is refused instead of being called unconfirmed. */
+            if (!$this->_hasConfirmContext($ami) || strpos($spyPrefix, '^') !== FALSE) {
+                $ami->disconnect();
+                $this->errMsg = _tr('Listening on an external number needs the confirmation dialplan: run install.sh on the PBX');
+                return FALSE;
+            }
+            $request['Channel'] = 'Local/'.$target.'@from-internal';
+            $request['Timeout'] = 20000;
+            $request['Context'] = self::SPY_CONFIRM_CONTEXT;
+            $request['Exten'] = 's';
+            $request['Priority'] = '1';
+            $request['Variable'] = 'CP_SPY='.$spyPrefix.'^'.self::$_spyModes[$mode];
+        }
+
+        $r = $ami->send_request('Originate', $request);
         $ami->disconnect();
         if (!is_array($r) || !isset($r['Response']) || $r['Response'] != 'Success') {
             $this->errMsg = _tr('Failed to start listening');
@@ -439,7 +467,9 @@ class paloControlPanelUtils
     /**
      * State of a listening session.
      *
-     * @return  mixed   array('active' => bool, 'answered' => bool), NULL on error
+     * confirming: an external number answered and the dialplan waits for 1.
+     *
+     * @return  mixed   array('active', 'answered', 'confirming' => bool), NULL on error
      */
     function spyStatus($uid)
     {
@@ -451,12 +481,15 @@ class paloControlPanelUtils
             $this->errMsg = _tr('(internal) Failed to list channels');
             return NULL;
         }
-        $state = array('active' => FALSE, 'answered' => FALSE);
+        $state = array('active' => FALSE, 'answered' => FALSE, 'confirming' => FALSE);
         foreach ($this->_spyChannels($channels, $uid) as $fields) {
             $state['active'] = TRUE;
-            // Field 6 is the application: ChanSpy runs once the call is answered
-            if (in_array($uid, $fields, TRUE) && (strcasecmp($fields[4], 'Up') == 0 || strcasecmp($fields[5], 'ChanSpy') == 0))
-                $state['answered'] = TRUE;
+            if (!in_array($uid, $fields, TRUE)) continue;
+            // Fields: channel, context, exten, priority, state, application
+            $spying = (strcasecmp($fields[5], 'ChanSpy') == 0);
+            if (strcasecmp($fields[4], 'Up') == 0 || $spying) $state['answered'] = TRUE;
+            if ($fields[1] === self::SPY_CONFIRM_CONTEXT && !$spying && strcasecmp($fields[4], 'Up') == 0)
+                $state['confirming'] = TRUE;
         }
         return $state;
     }
@@ -503,13 +536,22 @@ class paloControlPanelUtils
         $channels = $this->_listChannels($ami);
         $channel = NULL;
         if (is_array($channels)) foreach ($channels as $fields) {
-            if (in_array($uid, $fields, TRUE)) { $channel = $fields[0]; break; }
+            if (in_array($uid, $fields, TRUE)) { $channel = $fields; break; }
         }
         if (is_null($channel)) {
             $ami->disconnect();
             $this->errMsg = _tr('The listening call has ended');
             return FALSE;
         }
+        // Before ChanSpy runs, a key would go to the "press 1" prompt instead
+        if (strcasecmp($channel[5], 'ChanSpy') != 0) {
+            $ami->disconnect();
+            $this->errMsg = ($channel[1] === self::SPY_CONFIRM_CONTEXT && strcasecmp($channel[4], 'Up') == 0)
+                ? _tr('Press 1 on the phone first')
+                : _tr('Answer the call first');
+            return FALSE;
+        }
+        $channel = $channel[0];
         $r = $ami->send_request('PlayDTMF', array(
             'Channel' => $channel,
             'Digit'   => self::$_spyKeys[$mode],

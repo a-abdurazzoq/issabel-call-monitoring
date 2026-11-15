@@ -2068,7 +2068,7 @@ var SPY_RECENT_KEY = 'cp-spy-recent';
 var SPY_RECENT_MAX = 8;
 var SPY_POLL_MS = 2000;
 var SPY_MODES = ['listen', 'whisper', 'barge'];
-var spySession = null;      // {uid, agent, name, target, mode, started, answered, timer}
+var spySession = null;      // {uid, agent, name, target, mode, started, answered, confirming, ended, timer}
 var spyDialogAgent = null;  // {number, name} while the dialog is open
 var spyDialogMode = 'listen';
 
@@ -2166,6 +2166,7 @@ function ensureSpyDialog() {
             '<div id="cp-spy-recent" class="cp-spy-recent"></div>' +
             '<div class="cp-spy-modes" id="cp-spy-dialog-modes">' + spyModeButtons('setSpyDialogMode') + '</div>' +
             '<div class="cp-spy-hint">' + escapeHtml(tr('LBL_SPY_KEYS_HINT', '')) + '</div>' +
+            '<div class="cp-spy-hint">' + escapeHtml(tr('LBL_SPY_CONFIRM_HINT', '')) + '</div>' +
             '<div id="cp-spy-error" class="cp-spy-error"></div>' +
             '<div class="cp-spy-actions">' +
                 '<button type="button" class="cp-spy-btn" onclick="closeSpyDialog()">' + escapeHtml(tr('LBL_CANCEL', 'Cancel')) + '</button>' +
@@ -2247,7 +2248,7 @@ function startSpy(agent, name, target, mode, callback) {
             if (r.status !== 'success' || !r.uid) { callback(false, r.message); return; }
             spyRecentAdd(target);
             spySession = {uid: r.uid, agent: agent, name: name, target: target, mode: mode,
-                started: Date.now(), answered: false, ended: false, timer: null};
+                started: Date.now(), answered: false, confirming: false, ended: false, timer: null};
             renderSpyBar();
             spySession.timer = setInterval(pollSpy, SPY_POLL_MS);
             callback(true);
@@ -2264,6 +2265,7 @@ function pollSpy() {
         if (spySession !== s || r.status !== 'success') return;
         if (r.active) {
             s.answered = !!r.answered;
+            s.confirming = !!r.confirming;   // external number: waits for 1
             renderSpyBar();
         } else if (Date.now() - s.started > 4000) {
             endSpySession(s);    // not answered, rejected or finished
@@ -2295,7 +2297,7 @@ function stopSpy(then) {
 // then the supervisor is called again in the new mode.
 function setSpyMode(mode) {
     var s = spySession;
-    if (!s || s.ended || s.mode === mode) return;
+    if (!s || s.ended || !s.answered || s.confirming || s.mode === mode) return;
     spyRequest('POST', {action: 'spyMode', uid: s.uid, mode: mode}, function(r) {
         if (spySession !== s) return;
         if (r.status !== 'success') { if (r.message) alert(r.message); return; }
@@ -2327,15 +2329,20 @@ function renderSpyBar() {
         bar = document.getElementById('cp-spy-bar');
     }
     bar.style.display = '';
-    $(bar).toggleClass('is-live', s.answered && !s.ended).toggleClass('is-ended', s.ended);
+    var live = s.answered && !s.confirming && !s.ended;
+    $(bar).toggleClass('is-live', live).toggleClass('is-confirm', s.confirming && !s.ended)
+        .toggleClass('is-ended', s.ended);
     $(bar).find('.cp-spy-bar-title').text(tr('LBL_SPY_BAR', 'Listening to %s').replace('%s', s.agent) +
         (s.name ? ' · ' + s.name : ''));
     $(bar).find('.cp-spy-bar-state').text(
         s.ended ? tr('LBL_SPY_ENDED', 'Ended') :
+        s.confirming ? tr('LBL_SPY_CONFIRM', 'Answer and press 1') :
         s.answered ? tr('LBL_SPY_CONNECTED', 'Connected') + ' · ' + s.target :
         tr('LBL_SPY_CALLING', 'Calling %s…').replace('%s', s.target));
     markSpyMode(bar, s.mode);
-    $(bar).find('.cp-spy-mode, .cp-spy-btn-stop').prop('disabled', s.ended);
+    // Mode keys work only while ChanSpy runs (not ringing, not waiting for 1)
+    $(bar).find('.cp-spy-mode').prop('disabled', !live);
+    $(bar).find('.cp-spy-btn-stop').prop('disabled', s.ended);
 }
 
 // Language switcher of the status bar: remembered per browser in a cookie

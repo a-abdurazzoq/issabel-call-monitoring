@@ -13,6 +13,7 @@ Issabel framework and can't be run on its own.
 ```text
 install.sh                  installer / updater (run on the PBX as root)
 control.xml                 menu definition, merged by issabel-menumerge
+asterisk/extensions_cp_spy.conf   dialplan: "press 1" before listening on an external number
 control_panel/              the module, copied to /var/www/html/modules/control_panel/
   index.php                 entry point: page rendering and JSON actions
   configs/default.conf.php  module settings (SQLite layout database)
@@ -133,7 +134,21 @@ backed by `paloControlPanelUtils::spy*`.
   - An own extension is dialled directly through `DEVICE/<n>/dial`, so it never
     reaches follow-me or voicemail.
   - Other numbers go through `Local/<n>@from-internal` with a 20-second
-    timeout.
+    timeout. They don't get ChanSpy directly: the call goes to the dialplan
+    context `cp-spy-confirm` (`asterisk/extensions_cp_spy.conf`, installed by
+    `install.sh` to `/etc/asterisk/` and included from
+    `extensions_custom.conf`). It plays a beep and waits for 1 (three tries,
+    5 s each), so voicemail or an answering machine never gets the
+    conversation. The agent device and the mode letters come in one channel
+    variable `CP_SPY=<dial string>^<w|B|empty>` (the AMI client can't send
+    several `Variable` headers) and are split with `CUT`.
+  - Before calling an external number, `spyStart` checks with
+    `dialplan show s@cp-spy-confirm` that the context is loaded. Without it the
+    number is refused, it is never called unconfirmed.
+- **Status.** `spyStatus` returns `active`, `answered` and `confirming`
+  (answered, still in `cp-spy-confirm`, ChanSpy not started). While
+  confirming or ringing the page disables the mode buttons and `spyMode`
+  refuses, because a 4/5/6 key would go to the "press 1" prompt.
 - **Session.** The originated channel gets a known uniqueid (`ChannelId`,
   `cpspy-<time>-<rand>`), which is stored in `$_SESSION[$module]['spy']`.
   Status, mode and hangup requests only accept session ids of the same

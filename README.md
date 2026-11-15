@@ -47,7 +47,10 @@ bash install.sh
 Then open **PBX → Call Monitoring** in Issabel.
 
 The installer copies the module to `/var/www/html/modules/control_panel/`,
-adds the menu item and sets the owner to `asterisk:asterisk`. By default only
+adds the menu item and sets the owner to `asterisk:asterisk`. For listening on
+an external number it also installs a small dialplan
+(`/etc/asterisk/extensions_cp_spy.conf`, included from
+`extensions_custom.conf`) and reloads the dialplan. By default only
 the *administrator* group can see the menu item. Other groups can be given
 access in Issabel's group permissions.
 
@@ -69,6 +72,9 @@ that the browser loads the new scripts.
 ```sh
 rm -rf /var/www/html/modules/control_panel
 issabel-menuremove control_panel
+rm -f /etc/asterisk/extensions_cp_spy.conf
+sed -i '/^#include extensions_cp_spy.conf$/d' /etc/asterisk/extensions_custom.conf
+asterisk -rx "dialplan reload"
 ```
 
 ## Using the panel
@@ -128,7 +134,8 @@ next to *Agents* switches between sorting by state and by number.
    - **Listen**: you hear the agent and the customer, nobody hears you.
    - **Whisper**: only the agent hears you.
    - **Barge in**: three-way call, both hear you.
-4. Answer the call. Listening stops when the agent's call ends.
+4. Answer the call. On an external number you hear a beep: press **1** to
+   start listening. Listening stops when the agent's call ends.
 
 The bar at the bottom shows the state of the call. It switches the mode and
 **hangs up** your call, for example if you entered a wrong number. The phone
@@ -138,16 +145,20 @@ offers to call you again in the new mode.
 
 ![Listening bar](docs/images/en/listen-bar.png)
 
-> **External numbers and voicemail.** Asterisk starts sending the
-> conversation as soon as the call is answered, by a person or by a machine.
+> **External numbers and voicemail.** A call can be answered by a machine
+> instead of you: the mobile network's voicemail or a call forwarding.
 >
 > - **Your own extension:** the panel rings your phone directly, without
 >   follow-me or voicemail, so there is no risk.
 > - **External number:** the call goes out through your outbound routes and
->   rings for up to 20 seconds. If the mobile network's voicemail or call
->   forwarding answers instead of you, the conversation is recorded there or
->   heard by someone else. On a mobile used for listening, turn off voicemail
->   and call forwarding (`##002#` on most GSM networks).
+>   rings for up to 20 seconds. After the answer you hear a beep, and
+>   listening starts only when you press **1**. Voicemail doesn't press 1, so
+>   after three beeps the call is hung up and the conversation never gets
+>   there. A call forwarded to another person can still be confirmed by that
+>   person, so on a mobile used for listening turn off call forwarding
+>   (`##002#` on most GSM networks).
+> - The confirmation needs the dialplan that `install.sh` installs. Without it
+>   the panel refuses external numbers (your extension still works).
 
 ## Configuration
 

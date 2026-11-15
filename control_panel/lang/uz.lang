@@ -105,6 +105,16 @@ $arrLangModule = array(
     "The agent has no phone device" => "Operatorning telefon qurilmasi yoʻq",
     "The listening call has ended"  => "Tinglash qoʻngʻirogʻi allaqachon yakunlangan",
     "Failed to switch the listening mode" => "Tinglash rejimini almashtirib boʻlmadi",
+    "Answer and press 1"
+        => "Javob bering va 1 ni bosing",
+    "On an external number you will hear a beep after you answer: press 1 to start listening. Voicemail cannot do that, so the conversation never gets there."
+        => "Tashqi raqamda javob berganingizdan keyin signal eshitasiz: tinglashni boshlash uchun 1 ni bosing. Ovozli pochta buni qila olmaydi, shuning uchun suhbat u yerga tushmaydi.",
+    "Press 1 on the phone first"
+        => "Avval telefonda 1 ni bosing",
+    "Answer the call first"
+        => "Avval qoʻngʻiroqqa javob bering",
+    "Listening on an external number needs the confirmation dialplan: run install.sh on the PBX"
+        => "Tashqi raqam orqali tinglash uchun tasdiqlash ssenariysi kerak: ATSda install.sh ni ishga tushiring",
 
     // Navbat operatorlarining holatlari
     "Available"                     => "Boʻsh",

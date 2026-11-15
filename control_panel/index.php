@@ -281,6 +281,8 @@ function handleHTML_mainReport($smarty, $module_name, $local_templates_dir)
             'LBL_SPY_BAR'       =>  _tr('Listening to %s'),
             'LBL_SPY_CALLING'   =>  _tr('Calling %s…'),
             'LBL_SPY_CONNECTED' =>  _tr('Call connected'),
+            'LBL_SPY_CONFIRM'   =>  _tr('Answer and press 1'),
+            'LBL_SPY_CONFIRM_HINT' => _tr('On an external number you will hear a beep after you answer: press 1 to start listening. Voicemail cannot do that, so the conversation never gets there.'),
             'LBL_SPY_ENDED'     =>  _tr('Ended'),
             'LBL_SPY_BAD_NUMBER'=>  _tr('Enter a number: digits, *, # or a leading + (2-20 characters)'),
             'LBL_SPY_FAILED'    =>  _tr('Failed to start listening'),
@@ -568,6 +570,7 @@ function handleJSON_spyStatus($smarty, $module_name, $local_templates_dir)
     } else {
         $respuesta['active'] = $state['active'];
         $respuesta['answered'] = $state['answered'];
+        $respuesta['confirming'] = $state['confirming'];
     }
     return _spyJSON($respuesta);
 }

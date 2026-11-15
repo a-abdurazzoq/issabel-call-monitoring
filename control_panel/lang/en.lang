@@ -107,6 +107,16 @@ $arrLangModule = array(
     "The agent has no phone device" => "The agent has no phone device",
     "The listening call has ended"  => "The listening call has ended",
     "Failed to switch the listening mode" => "Failed to switch the listening mode",
+    "Answer and press 1"
+        => "Answer and press 1",
+    "On an external number you will hear a beep after you answer: press 1 to start listening. Voicemail cannot do that, so the conversation never gets there."
+        => "On an external number you will hear a beep after you answer: press 1 to start listening. Voicemail cannot do that, so the conversation never gets there.",
+    "Press 1 on the phone first"
+        => "Press 1 on the phone first",
+    "Answer the call first"
+        => "Answer the call first",
+    "Listening on an external number needs the confirmation dialplan: run install.sh on the PBX"
+        => "Listening on an external number needs the confirmation dialplan: run install.sh on the PBX",
 
     // Queue agent states
     "Available"                     => "Available",

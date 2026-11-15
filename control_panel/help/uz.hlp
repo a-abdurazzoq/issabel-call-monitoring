@@ -15,7 +15,7 @@
         <p align="Justify">Operatorlarning holati, qabul qilingan qoʻngʻiroqlar soni va shu holatda qancha vaqt turgani koʻrinadi. Uzoq pauza yoki uzoq suhbatda qator qizil rangga kiradi. «Operatorlar» yonidagi belgi holat yoki raqam boʻyicha saralashni almashtiradi. Kutayotgan mijozlar avval sariq, keyin qizil rangda belgilanadi.</p>
 
         <h2>Qoʻngʻiroqni tinglash</h2>
-        <p align="Justify">Quloqchin belgisi suhbatlashayotgan operator yonida paydo boʻladi. Sizga qoʻngʻiroq qilinadigan raqamni (ichki yoki tashqi raqamingiz) va rejimni tanlang: «Tinglash» (sizni hech kim eshitmaydi), «Maslahat berish» (sizni faqat operator eshitadi) yoki «Aralashish» (sizni ikkalasi ham eshitadi). Tinglashni boshlash uchun qoʻngʻiroqqa javob bering. Pastdagi panel rejimni almashtiradi va qoʻngʻiroqni yakunlaydi; qoʻngʻiroq vaqtida rejimni telefonning 4, 5 va 6 tugmalari ham almashtiradi.</p>
+        <p align="Justify">Quloqchin belgisi suhbatlashayotgan operator yonida paydo boʻladi. Sizga qoʻngʻiroq qilinadigan raqamni (ichki yoki tashqi raqamingiz) va rejimni tanlang: «Tinglash» (sizni hech kim eshitmaydi), «Maslahat berish» (sizni faqat operator eshitadi) yoki «Aralashish» (sizni ikkalasi ham eshitadi). Tinglashni boshlash uchun qoʻngʻiroqqa javob bering. Tashqi raqamda javobdan keyin signal eshitiladi: 1 ni bosing, aks holda qoʻngʻiroq yakunlanadi, shuning uchun suhbat ovozli pochtaga tushmaydi. Pastdagi panel rejimni almashtiradi va qoʻngʻiroqni yakunlaydi; qoʻngʻiroq vaqtida rejimni telefonning 4, 5 va 6 tugmalari ham almashtiradi.</p>
 
         <div class="hlp_figures"><img src="../modules/{$node_id}/images/hlp_operator_panel.png" border="0" />
 	<p>1-rasm</p></div>
