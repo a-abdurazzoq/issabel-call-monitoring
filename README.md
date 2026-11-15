@@ -5,7 +5,8 @@
 A real-time call monitoring panel for **Issabel 5**. It replaces the Operator
 Panel that was removed from Issabel 5 and is built for supervisors of small call
 centers: extensions and their calls, queues with agents and waiting customers,
-queue KPIs, long-wait alarms and call listening, on one page.
+queue KPIs, long-wait alarms, missed calls with call back and call listening,
+on one page.
 
 ![Call Monitoring](docs/images/en/overview.png)
 
@@ -22,6 +23,9 @@ queue KPIs, long-wait alarms and call listening, on one page.
 - **Long-wait alarm**: waiting customers turn yellow and then red. The browser
   tab shows the number of waiting customers. An optional beep and desktop
   notification fire when someone waits too long.
+- **Missed calls today**: customers who hung up in a queue, with a
+  **Call back** button that connects a free agent to the customer. Numbers
+  that were reached move to the bottom in grey.
 - **TV mode**: a full-screen view for a TV in the call center room: queues
   only, large numbers, no buttons.
 - **Call listening**: listen to an agent's call, whisper to the agent or barge
@@ -145,6 +149,37 @@ open the module with `&wallboard=1` added to the address, for example
 mode right away; press F11 for full screen. The page keeps the Issabel
 session alive while it is open.
 
+### Missed calls
+
+![Missed calls and the Call back dialog](docs/images/en/missed.png)
+
+The **Missed calls today** card under the queues lists the customers who left
+a queue without an answer since midnight: they hung up, the wait time ran out,
+the queue had no agents, or they left with a key. Each number appears once.
+The row shows the time of the last missed call, how many times the customer
+called (×N), the queue and how long the customer waited. The badge in the
+header counts the numbers that still need a call back. The list refreshes
+every 15 seconds.
+
+**Call back.** Click **Call back** and pick one of the free agents (agents of
+the same queue come first). The agent's phone rings; when the agent answers,
+Asterisk dials the customer through your outbound routes, as if the agent had
+dialled the number. The number is dialled as shown in the list (a leading `+`
+is dropped), so your outbound routes must accept that format. While the call
+is going on, the row shows *Calling back* for every supervisor.
+
+A number counts as **reached** when, after its last missed call, an outgoing
+call to it was answered or the customer called again and was answered in a
+queue. Reached numbers move to the bottom in grey with the time and the
+agent. Unanswered callbacks show *Not reached ×N* with the time of the last
+attempt. Numbers are compared by their last 9 digits, so `+998 90 111 22 33`
+and `901112233` are the same customer.
+
+The data comes from the Asterisk queue log (`/var/log/asterisk/queue_log`)
+and the call history (CDR). If the CDR database is not available, the list is
+still shown, but callbacks are not checked. In TV mode the card is shown
+without the buttons.
+
 ### Call listening
 
 ![Listening dialog](docs/images/en/listen.png)
@@ -207,7 +242,7 @@ configuration.
 - A listening call can only be checked, switched or hung up by the user who
   started it. Other calls can't be hung up through these requests.
 - Actions that change something (hang up, call, listen, pause an agent,
-  save the layout, reset statistics) are accepted only as POST requests sent from the module's
+  call back, save the layout, reset statistics) are accepted only as POST requests sent from the module's
   own page. A link or a form on another site can't trigger them through the
   logged-in user's session (CSRF protection).
 - Earlier versions of this module (upstream) shipped `libs/utilities.php`. It
@@ -227,6 +262,12 @@ configuration.
   need HTTPS.
 - **Listening does not start:** run `asterisk -rvvv` on the PBX, click
   *Call me* and check the output.
+- **"Cannot read the queue log":** the web server can't read
+  `/var/log/asterisk/queue_log`. Check that the file exists and that the
+  `asterisk` user can read it (`ls -l /var/log/asterisk/queue_log`).
+- **Call back rings the agent, but the customer is not dialled:** no outbound
+  route matches the number. Run `asterisk -rvvv`, click *Call back* and check
+  which route the number goes to.
 
 ## Development
 

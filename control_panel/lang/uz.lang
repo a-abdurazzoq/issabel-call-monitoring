@@ -87,6 +87,46 @@ $arrLangModule = array(
         => "Supervayzer",
     "Failed to change the pause of the agent"
         => "Operator pauzasini oʻzgartirib boʻlmadi",
+    "Missed calls today"
+        => "Bugungi oʻtkazib yuborilgan qoʻngʻiroqlar",
+    "No missed calls today"
+        => "Bugun oʻtkazib yuborilgan qoʻngʻiroqlar yoʻq",
+    "To call back"
+        => "Qayta qoʻngʻiroq qilish kerak",
+    "Call back"
+        => "Qayta qoʻngʻiroq",
+    "Call back %s"
+        => "%s raqamiga qayta qoʻngʻiroq",
+    "Free agents"
+        => "Boʻsh operatorlar",
+    "No free agents right now"
+        => "Hozir boʻsh operatorlar yoʻq",
+    "The phone of the agent rings first; when the agent answers, the customer is dialled."
+        => "Avval operator telefoni jiringlaydi; u javob berganda mijozga qoʻngʻiroq qilinadi.",
+    "Called %s times"
+        => "%s marta qoʻngʻiroq qilgan",
+    "Waited"
+        => "Kutgan",
+    "Hung up while waiting"
+        => "Javobni kutmay qoʻydi",
+    "Waiting time ran out"
+        => "Kutish vaqti tugadi",
+    "No agents in the queue"
+        => "Navbatda operatorlar yoʻq edi",
+    "Left the queue with a key"
+        => "Navbatdan tugma bilan chiqdi",
+    "Reached %s · %s"
+        => "Bogʻlanildi %s · %s",
+    "Calling back: %s…"
+        => "%s qayta qoʻngʻiroq qilmoqda…",
+    "Not reached ×%s · last %s"
+        => "Bogʻlanilmadi ×%s · oxirgi %s",
+    "Failed to call back"
+        => "Qayta qoʻngʻiroq qilib boʻlmadi",
+    "The call history (CDR) is not available: callbacks are not checked"
+        => "Qoʻngʻiroqlar tarixi (CDR) mavjud emas: qayta qoʻngʻiroqlar tekshirilmaydi",
+    "Cannot read the queue log"
+        => "Navbatlar jurnalini oʻqib boʻlmadi",
 
     // Qoʻngʻiroqni tinglash (ChanSpy)
     "Listen to this agent"          => "Operatorni tinglash",

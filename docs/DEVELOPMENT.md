@@ -19,7 +19,8 @@ control_panel/              the module, copied to /var/www/html/modules/control_
   configs/default.conf.php  module settings (SQLite layout database)
   libs/
     paloControlPanelStatus.class.php   collects the PBX state (FreePBX DB, SQLite, AMI)
-    paloControlPanelUtils.class.php    actions: layout changes, queue reset, call listening
+    paloControlPanelUtils.class.php    actions: layout changes, queue reset, pause, call back, call listening
+    paloControlPanelMissed.class.php   missed queue calls of today (queue_log + CDR)
     AGI_AsteriskManager2.class.php     AMI client with deadlines and batching
     paloInterfaceSSE.class.php,
     paloServerSentEvents.class.php     legacy streaming endpoint (see below)
@@ -131,6 +132,38 @@ can open such a link directly. Full screen is requested only from the
 button, because browsers allow it only after a click; leaving full screen
 (Esc) also leaves the mode. The clock and the exit button are a separate
 `#cp-wb-bar` outside the Ember templates.
+
+**Missed calls.** The card `#cp-missed` is plain DOM appended to
+`.right-container` by `ensureMissedCard()`, outside the Ember templates.
+`loadMissedCalls()` asks for `action=missedCalls` every 15 s
+(`MISSED_POLL_MS`) and `renderMissedCalls()` rewrites the list only when it
+changed. Unresolved numbers come first, newest first; resolved ones go to
+the bottom in grey (`.is-done`).
+
+- `paloControlPanelMissed::missedToday()` reads today's part of
+  `/var/log/asterisk/queue_log` backwards from the end (at most 16 MB). Calls
+  are grouped by call id: `ENTERQUEUE` gives the caller number, `ABANDON`,
+  `EXITWITHTIMEOUT`, `EXITEMPTY` and `EXITWITHKEY` mark a missed call, and
+  `CONNECT` an answered one (a call that failed over to another queue and was
+  answered there is not missed). Missed calls are grouped by number;
+  numbers are compared by their last 9 digits (`numberKey()`).
+- A number is **resolved** when, after its last missed call, it was answered
+  in a queue (`CONNECT`) or an outgoing call to it was answered (CDR,
+  `asteriskcdrdb.cdr`, `disposition = ANSWERED` and `billsec > 0`).
+  Unanswered outgoing calls are counted as attempts (CDR rows within 10 s
+  count once). Without the CDR database the list still works, with
+  `cdr: false`.
+- **Call back.** The dialog lists free agents from `queueMemberStates`
+  (state `st-free`, agents of the call's queue first) and posts
+  `action=callbackStart` (`number`, `agent`). `paloControlPanelUtils::callbackStart`
+  sends AMI `Originate` with the agent's device as `Channel` (the same dial
+  string as for listening on one's own extension, so no follow-me or
+  voicemail) and `from-internal` / the customer number as
+  `Context` / `Exten`, so the call goes through the outbound routes.
+  The started callback is written to the SQLite table `cp_callback` (in
+  the layout database, created on first use, rows older than two days are
+  deleted). For 3 minutes, until the call shows up in the CDR, every
+  supervisor sees the row as *calling back*.
 
 **Conferences and call parking** were removed from the page. The backend skips
 them too: `$_withConferencesAndParking = FALSE` in `paloControlPanelStatus`.

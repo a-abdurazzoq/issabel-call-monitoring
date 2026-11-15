@@ -14,6 +14,9 @@
         <p align="Justify">Answered and abandoned calls, customers waiting, the longest wait, the service level (SLA), the abandon rate, the average wait and talk time. Asterisk counts these since the last statistics reset (the round arrow in the card header) or the last Asterisk restart.</p>
         <p align="Justify">Agents show their state, the calls taken and how long they have been in that state. A row turns red after a long pause or a long call. The sort icon next to "Agents" switches between sorting by state and by number. Waiting customers turn yellow and then red the longer they wait. The pause icon at the end of an agent row (shown on hover) pauses or unpauses the agent in all of its queues.</p>
 
+        <h2>Missed calls</h2>
+        <p align="Justify">The "Missed calls today" card lists the customers who left a queue without an answer since midnight, one row per number: the time, how many times they called, the queue and the wait. "Call back" shows the free agents: the chosen agent's phone rings first, and when the agent answers the customer is dialled through the outbound routes. A number that was reached later (an answered callback or an answered queue call) moves to the bottom in grey; an unanswered callback shows "Not reached". The data comes from the queue log and the call history (CDR) and refreshes every 15 seconds.</p>
+
         <h2>Listening to a call</h2>
         <p align="Justify">The headphones icon appears next to an agent who is in a call. Enter the number to be called at (your extension or an external number) and choose a mode: Listen (nobody hears you), Whisper (only the agent hears you) or Barge in (both hear you). Answer the call to start listening. On an external number you hear a beep after the answer: press 1, otherwise the call is hung up, so voicemail never gets the conversation. The bar at the bottom switches the mode or hangs up; during the call the phone keys 4, 5 and 6 switch the mode as well.</p>
 

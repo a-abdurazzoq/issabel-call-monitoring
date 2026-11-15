@@ -288,6 +288,58 @@ class paloControlPanelUtils
     }
 
     /**
+     * Call back a missed caller: ring the agent's phone directly (no
+     * follow-me, no voicemail) and, once the agent answers, dial the number
+     * through the outbound routes (context from-internal). The phone shows
+     * "CB <number>"; the caller ID number stays the agent's extension, so
+     * FreePBX picks the agent's outbound caller ID and route permissions.
+     * The callback is written to cp_callback, so all supervisors see it.
+     *
+     * @return  bool
+     */
+    function callbackStart($number, $agent, $user)
+    {
+        if (!is_string($number) || !preg_match('/^\+?[0-9]{3,20}$/', $number)) {
+            $this->errMsg = _tr('Invalid number');
+            return FALSE;
+        }
+        if (!is_string($agent) || !preg_match('/^[0-9]{1,20}$/', $agent)) {
+            $this->errMsg = _tr('Invalid agent');
+            return FALSE;
+        }
+        $ami = $this->_amiConnect();
+        if (is_null($ami)) return FALSE;
+        $dials = $this->_deviceDialStrings($ami, $agent);
+        if (count($dials) <= 0) {
+            $ami->disconnect();
+            $this->errMsg = _tr('The agent has no phone device');
+            return FALSE;
+        }
+        $dialNumber = ltrim($number, '+');
+        $r = $ami->send_request('Originate', array(
+            'Channel'  => $dials[0],
+            'Context'  => 'from-internal',
+            'Exten'    => $dialNumber,
+            'Priority' => '1',
+            'CallerID' => '"CB '.$dialNumber.'" <'.$agent.'>',
+            'Timeout'  => 30000,
+            'Async'    => 'true',
+        ));
+        $ami->disconnect();
+        if (!is_array($r) || !isset($r['Response']) || $r['Response'] != 'Success') {
+            $this->errMsg = _tr('Failed to call back');
+            return FALSE;
+        }
+        if (!is_null($this->_db)) {
+            paloControlPanelMissed::ensureTable($this->_db);
+            $this->_db->genExec('DELETE FROM cp_callback WHERE started < ?', array(time() - 2 * 86400));
+            $this->_db->genExec('INSERT INTO cp_callback (numkey, number, agent, started, user) VALUES (?, ?, ?, ?, ?)',
+                array(paloControlPanelMissed::numberKey($number), $number, $agent, time(), (string)$user));
+        }
+        return TRUE;
+    }
+
+    /**
      * Pause or unpause a queue member in all of its queues (AMI QueuePause
      * without Queue), as the agent's own pause toggle does. A pause gets the
      * reason "supervisor", shown in the agent row like any pause reason.

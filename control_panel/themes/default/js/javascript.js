@@ -2461,9 +2461,225 @@ $(document).on('fullscreenchange webkitfullscreenchange MSFullscreenChange', fun
     }
 });
 $(document).on('keydown', function(e) {
-    if (wallboardOn && (e.key === 'Escape' || e.keyCode === 27) && !$('#cp-spy-overlay').is(':visible'))
+    if (wallboardOn && (e.key === 'Escape' || e.keyCode === 27) && !$('#cp-spy-overlay').is(':visible') && !callbackDialog)
         toggleWallboard(false);
 });
 $(function() {
     if (/[?&]wallboard=1(&|$)/.test(location.search)) toggleWallboard(true, true);
+});
+
+//////////////////////////////// MISSED CALLS OF TODAY, CALLBACK ////////////////////////////////
+// A card under the queues lists today's missed queue calls, one row per
+// number (action=missedCalls: queue_log + CDR, see paloControlPanelMissed).
+// Numbers still to call back come first; reached ones go down in grey.
+// "Call back" rings a free agent's phone, then dials the customer
+// (action=callbackStart).
+
+var MISSED_POLL_MS = 15000;
+var missedCalls = null, missedError = '', missedCdr = true, missedLoading = false, missedHtml = '';
+var callbackDialog = null;     // {number, queue, busy, timer}
+
+function pad2(n) { return (n < 10 ? '0' : '') + n; }
+function formatClock(unix) {
+    var d = new Date(unix * 1000);
+    return pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+}
+
+function ensureMissedCard() {
+    if (document.getElementById('cp-missed')) return true;
+    var host = $('.right-container').first();
+    if (!host.length) return false;
+    host.append(
+        '<div class="pbxpanel mc-panel" id="cp-missed">' +
+            '<div class="operator-title-container"><i class="fa fa-phone-square"></i>&nbsp;' +
+                escapeHtml(tr('LBL_MC_TITLE', 'Missed calls today')) +
+                '<span class="mc-count" id="cp-missed-count" title="' +
+                    escapeHtml(tr('LBL_MC_TO_CALL', 'To call back')) + '"></span></div>' +
+            '<div class="q-card mc-card">' +
+                '<div class="mc-note" id="cp-missed-note"></div>' +
+                '<div class="mc-list" id="cp-missed-list"></div>' +
+            '</div>' +
+        '</div>');
+    renderMissedCalls();
+    return true;
+}
+
+function loadMissedCalls() {
+    if (missedLoading) return;
+    missedLoading = true;
+    // "Today" is the supervisor's day: the server's PHP timezone may differ
+    var midnight = new Date();
+    midnight.setHours(0, 0, 0, 0);
+    $.ajax({url: spyUrl(), type: 'GET', dataType: 'json', timeout: 15000,
+            data: {action: 'missedCalls', since: Math.floor(midnight.getTime() / 1000)}})
+        .done(function(r) {
+            if (r) verificar_error_session(r);
+            if (r && r.status === 'success') {
+                missedCalls = r.calls || [];
+                missedCdr = r.cdr !== false;
+                missedError = '';
+            } else {
+                missedError = (r && r.message) || '';
+            }
+            renderMissedCalls();
+        })
+        .always(function() { missedLoading = false; });
+}
+
+// Row state: reached (grey, at the bottom), callback running, tried, or new
+function missedState(c) {
+    if (c.resolved) return {cls: 'is-done', canCall: false,
+        text: tr('LBL_MC_REACHED', 'Reached %s · %s').replace('%s', formatClock(c.resolved.time)).replace('%s', c.resolved.agent)};
+    if (c.calling) return {cls: 'is-calling', canCall: false,
+        text: tr('LBL_MC_CALLING', 'Calling back: %s…').replace('%s', c.calling.agent)};
+    if (c.attempts > 0 && c.lastAttempt) return {cls: 'is-tried', canCall: true,
+        text: tr('LBL_MC_NOT_REACHED', 'Not reached ×%s · last %s').replace('%s', c.attempts).replace('%s', formatClock(c.lastAttempt.time))};
+    var reasons = {ABANDON: ['LBL_MC_ABANDON', 'Hung up while waiting'], EXITWITHTIMEOUT: ['LBL_MC_TIMEOUT', 'Waiting time ran out'],
+                   EXITEMPTY: ['LBL_MC_EMPTYQ', 'No agents in the queue'], EXITWITHKEY: ['LBL_MC_KEY', 'Left the queue with a key']};
+    var r = reasons[c.reason] || reasons.ABANDON;
+    return {cls: '', canCall: true, text: tr(r[0], r[1])};
+}
+
+function missedRowHTML(c) {
+    var st = missedState(c);
+    var html = '<div class="mc-row ' + st.cls + '" data-number="' + escapeHtml(c.number) + '" data-queue="' + escapeHtml(c.queue) + '">' +
+        '<span class="mc-time">' + formatClock(c.last) + '</span>' +
+        '<span class="mc-num">' + escapeHtml(c.number) + '</span>';
+    if (c.count > 1) html += '<span class="mc-times" title="' + escapeHtml(tr('LBL_MC_TIMES', 'Called %s times').replace('%s', c.count)) +
+        '">×' + c.count + '</span>';
+    html += '<span class="mc-queue" title="' + escapeHtml(tr('LBL_MC_QUEUE', 'Queue')) + '"><i class="fa fa-users"></i> ' + escapeHtml(c.queue) + '</span>' +
+        '<span class="mc-wait" title="' + escapeHtml(tr('LBL_MC_WAITED', 'Waited')) + '"><i class="fa fa-clock-o"></i> ' + formatDuration(c.wait) + '</span>' +
+        '<span class="mc-status" title="' + escapeHtml(st.text) + '">' + escapeHtml(st.text) + '</span>';
+    if (st.canCall) html += '<button type="button" class="mc-call" onclick="openCallbackDialog(this)"><i class="fa fa-phone"></i> ' +
+        escapeHtml(tr('LBL_MC_CALL', 'Call back')) + '</button>';
+    return html + '</div>';
+}
+
+function renderMissedCalls() {
+    var list = document.getElementById('cp-missed-list');
+    if (!list) return;
+    var note = missedError || (missedCalls && !missedCdr ? tr('LBL_MC_NO_CDR', '') : '');
+    $('#cp-missed-note').text(note);
+    if (!missedCalls) return;
+    var calls = missedCalls.slice().sort(function(a, b) {
+        return ((a.resolved ? 1 : 0) - (b.resolved ? 1 : 0)) || (b.last - a.last);
+    });
+    var open = calls.filter(function(c) { return !c.resolved; }).length;
+    $('#cp-missed-count').text(open > 0 ? open : '');
+    var html = calls.length ? calls.map(missedRowHTML).join('')
+        : '<div class="q-empty">' + escapeHtml(tr('LBL_MC_EMPTY', 'No missed calls today')) + '</div>';
+    if (html !== missedHtml) { list.innerHTML = html; missedHtml = html; }
+}
+
+// Free agents (state "available", not paused) of all queues, the queue of the
+// missed call first; one entry per extension.
+function freeAgents(firstQueue) {
+    var seen = Object.create(null), list = [];
+    var queues = Object.keys(queueMemberStates).sort(function(a, b) {
+        return (a === firstQueue ? -1 : 0) - (b === firstQueue ? -1 : 0);
+    });
+    queues.forEach(function(q) {
+        (queueMemberStates[q] || []).forEach(function(m) {
+            var loc = m.Interface || m.Location || '';
+            var num = loc.substring(loc.indexOf('/') + 1).split('@')[0];
+            if (!/^[0-9]+$/.test(num) || seen[num]) return;
+            if (memberStatus(m.Status, m.Paused).cls !== 'st-free') return;
+            seen[num] = true;
+            list.push({number: num, name: m.MemberName || ''});
+        });
+    });
+    return list;
+}
+
+function ensureCallbackDialog() {
+    if (document.getElementById('cp-cb-overlay')) return;
+    $('body').append(
+        '<div id="cp-cb-overlay" class="cp-spy-overlay" style="display:none">' +
+        '<div class="cp-spy-dialog" role="dialog">' +
+            '<div class="cp-spy-head"><i class="fa fa-phone"></i> <span id="cp-cb-title"></span>' +
+                '<span class="cp-spy-x" onclick="closeCallbackDialog()">&times;</span></div>' +
+            '<div class="cp-spy-label">' + escapeHtml(tr('LBL_MC_FREE', 'Free agents')) + '</div>' +
+            '<div id="cp-cb-agents" class="cp-cb-agents"></div>' +
+            '<div class="cp-spy-hint">' + escapeHtml(tr('LBL_MC_HINT', '')) + '</div>' +
+            '<div id="cp-cb-error" class="cp-spy-error"></div>' +
+            '<div class="cp-spy-actions">' +
+                '<button type="button" class="cp-spy-btn" onclick="closeCallbackDialog()">' + escapeHtml(tr('LBL_CANCEL', 'Cancel')) + '</button>' +
+            '</div>' +
+        '</div></div>');
+    $('#cp-cb-overlay').on('mousedown', function(e) { if (e.target === this) closeCallbackDialog(); });
+}
+
+// Agent buttons of the dialog, refreshed every second while it is open
+function renderCallbackAgents() {
+    if (!callbackDialog || callbackDialog.busy) return;
+    var agents = freeAgents(callbackDialog.queue);
+    var html = agents.length ? agents.map(function(a) {
+        return '<button type="button" class="cp-cb-agent" data-agent="' + escapeHtml(a.number) + '" onclick="startCallback(this)">' +
+            '<b>' + escapeHtml(a.number) + '</b> ' + escapeHtml(a.name) + '</button>';
+    }).join('') : '<div class="q-empty">' + escapeHtml(tr('LBL_MC_NO_FREE', 'No free agents right now')) + '</div>';
+    var box = document.getElementById('cp-cb-agents');
+    if (box.getAttribute('data-html') !== html) {
+        box.innerHTML = html;
+        box.setAttribute('data-html', html);
+    }
+}
+
+function openCallbackDialog(btn) {
+    var row = $(btn).closest('.mc-row');
+    var number = row.attr('data-number');
+    if (!number) return;
+    ensureCallbackDialog();
+    closeCallbackDialog();
+    callbackDialog = {number: number, queue: row.attr('data-queue'), busy: false,
+                      timer: setInterval(renderCallbackAgents, 1000)};
+    $('#cp-cb-title').text(tr('LBL_MC_DIALOG', 'Call back %s').replace('%s', number));
+    $('#cp-cb-error').text('');
+    document.getElementById('cp-cb-agents').removeAttribute('data-html');
+    renderCallbackAgents();
+    $('#cp-cb-overlay').show();
+}
+
+function closeCallbackDialog() {
+    if (callbackDialog && callbackDialog.timer) clearInterval(callbackDialog.timer);
+    callbackDialog = null;
+    $('#cp-cb-overlay').hide();
+}
+
+function startCallback(el) {
+    var d = callbackDialog;
+    if (!d || d.busy) return;
+    var agent = el.getAttribute('data-agent');
+    var fail = function(message) {
+        if (callbackDialog !== d) return;
+        d.busy = false;
+        $('#cp-cb-agents .cp-cb-agent').prop('disabled', false);
+        $('#cp-cb-error').text(message || tr('LBL_MC_FAILED', 'Failed to call back'));
+    };
+    d.busy = true;
+    $('#cp-cb-agents .cp-cb-agent').prop('disabled', true);
+    $('#cp-cb-error').text('');
+    spyRequest('POST', {action: 'callbackStart', number: d.number, agent: agent}, function(r) {
+        if (callbackDialog !== d) return;
+        if (r.status !== 'success') { fail(r.message); return; }
+        // Show "calling back" right away; the next poll confirms it
+        (missedCalls || []).forEach(function(c) {
+            if (c.number === d.number) c.calling = {agent: agent, started: Math.floor(Date.now() / 1000)};
+        });
+        renderMissedCalls();
+        closeCallbackDialog();
+        setTimeout(loadMissedCalls, 3000);
+    }, function() { fail(''); });
+}
+
+$(document).on('keydown', function(e) {
+    if ((e.key === 'Escape' || e.keyCode === 27) && callbackDialog) closeCallbackDialog();
+});
+
+// The card needs the Ember page; poll from then on
+$(function() {
+    (function start() {
+        if (!ensureMissedCard()) { setTimeout(start, 1000); return; }
+        loadMissedCalls();
+        setInterval(loadMissedCalls, MISSED_POLL_MS);
+    })();
 });

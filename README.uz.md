@@ -6,7 +6,8 @@
 dan olib tashlangan Operator Panel oʻrnini bosadi va kichik call-markazlar
 supervayzerlari uchun moʻljallangan. Bitta sahifada ichki raqamlar va ularning
 qoʻngʻiroqlari, operatorlar va kutayotgan mijozlar bilan navbatlar, navbat
-koʻrsatkichlari, uzoq kutish signali va qoʻngʻiroqlarni tinglash koʻrinadi.
+koʻrsatkichlari, uzoq kutish signali, qayta qoʻngʻiroq bilan oʻtkazib
+yuborilgan qoʻngʻiroqlar va qoʻngʻiroqlarni tinglash koʻrinadi.
 
 ![Qoʻngʻiroqlar monitoringi](docs/images/uz/overview.png)
 
@@ -26,6 +27,9 @@ koʻrsatkichlari, uzoq kutish signali va qoʻngʻiroqlarni tinglash koʻrinadi.
 - **Uzoq kutish signali**: kutayotgan mijozlar avval sariq, keyin qizil
   rangda belgilanadi. Brauzer vkladkasida kutayotganlar soni koʻrinadi.
   Xohishga koʻra ovozli signal va ish stolidagi bildirishnoma yoqiladi.
+- **Bugungi oʻtkazib yuborilgan qoʻngʻiroqlar**: navbatda goʻshakni qoʻygan
+  mijozlar va boʻsh operatorni mijoz bilan bogʻlaydigan **Qayta qoʻngʻiroq**
+  tugmasi. Bogʻlanilgan raqamlar kulrang boʻlib pastga tushadi.
 - **Tablo rejimi**: operatorlar zalidagi televizor uchun toʻliq ekran
   koʻrinishi: faqat navbatlar, yirik raqamlar, tugmalarsiz.
 - **Qoʻngʻiroqni tinglash**: operator suhbatini tinglash, unga maslahat berish
@@ -157,6 +161,40 @@ modulni manzilga `&wallboard=1` qoʻshib oching, masalan
 rejimida ochiladi; toʻliq ekran uchun F11 ni bosing. Sahifa ochiq turganda
 Issabel sessiyasi tugamaydi.
 
+### Oʻtkazib yuborilgan qoʻngʻiroqlar
+
+![Oʻtkazib yuborilgan qoʻngʻiroqlar va «Qayta qoʻngʻiroq» oynasi](docs/images/uz/missed.png)
+
+Navbatlar ostidagi **Bugungi oʻtkazib yuborilgan qoʻngʻiroqlar** kartasida
+yarim tundan beri navbatdan javobsiz chiqqan mijozlar koʻrinadi: goʻshakni
+qoʻygan, kutish vaqti tugagan, navbatda operatorlar boʻlmagan yoki tugma
+bilan chiqqan. Har bir raqam bir marta koʻrsatiladi. Qatorda oxirgi oʻtkazib
+yuborilgan qoʻngʻiroq vaqti, mijoz necha marta qoʻngʻiroq qilgani (×N), navbat
+va qancha kutgani koʻrinadi. Sarlavhadagi hisoblagich hali qayta qoʻngʻiroq
+qilish kerak boʻlgan raqamlar soni. Roʻyxat har 15 soniyada yangilanadi.
+
+**Qayta qoʻngʻiroq.** **Qayta qoʻngʻiroq** tugmasini bosing va boʻsh
+operatorni tanlang (avval shu navbat operatorlari keladi). Operator telefoni
+jiringlaydi; u javob berganda Asterisk mijozni chiquvchi marshrutlar orqali
+teradi, xuddi raqamni operatorning oʻzi tergandek. Raqam roʻyxatda qanday
+koʻrsatilgan boʻlsa, shunday teriladi (boshidagi `+` olib tashlanadi),
+shuning uchun chiquvchi marshrutlar bu formatni qabul qilishi kerak.
+Qoʻngʻiroq davomida barcha supervayzerlarda qatorda «qayta qoʻngʻiroq
+qilmoqda» koʻrinadi.
+
+Agar oxirgi oʻtkazib yuborilgan qoʻngʻiroqdan keyin raqamga chiquvchi
+qoʻngʻiroqqa javob berilgan yoki mijoz yana qoʻngʻiroq qilib, unga navbatda
+javob berilgan boʻlsa, raqam **bogʻlanilgan** hisoblanadi. Bunday raqamlar
+vaqt va operator bilan kulrang boʻlib pastga tushadi. Qayta qoʻngʻiroqqa
+javob berilmasa, «Bogʻlanilmadi ×N» va oxirgi urinish vaqti koʻrinadi.
+Raqamlar oxirgi 9 ta raqami boʻyicha solishtiriladi, shuning uchun
+`+998 90 111 22 33` va `901112233` bitta mijoz.
+
+Maʼlumotlar Asterisk navbatlar jurnali (`/var/log/asterisk/queue_log`) va
+qoʻngʻiroqlar tarixidan (CDR) olinadi. CDR bazasi mavjud boʻlmasa, roʻyxat
+baribir koʻrsatiladi, lekin qayta qoʻngʻiroqlar tekshirilmaydi. Tablo
+rejimida karta tugmalarsiz koʻrinadi.
+
 ### Qoʻngʻiroqni tinglash
 
 ![Tinglash oynasi](docs/images/uz/listen.png)
@@ -228,7 +266,7 @@ sozlamasidir.
   almashtirishi yoki yakunlashi mumkin. Bu soʻrovlar orqali boshqa
   qoʻngʻiroqlarni uzib boʻlmaydi.
 - Biror narsani oʻzgartiradigan amallar (qoʻngʻiroqni uzish yoki boshlash,
-  tinglash, operatorni pauzaga qoʻyish, joylashuvni saqlash, statistikani
+  tinglash, operatorni pauzaga qoʻyish, qayta qoʻngʻiroq, joylashuvni saqlash, statistikani
   tozalash) faqat modulning oʻz
   sahifasidan yuborilgan POST soʻrovlar sifatida qabul qilinadi. Boshqa
   saytdagi havola yoki forma ularni tizimga kirgan foydalanuvchi nomidan
@@ -251,6 +289,14 @@ sozlamasidir.
   Bildirishnomalar uchun HTTPS kerak.
 - **Tinglash boshlanmayapti:** ATSda `asterisk -rvvv` ni ishga tushiring,
   «Menga qoʻngʻiroq qiling» tugmasini bosing va chiqishni koʻring.
+- **«Navbatlar jurnalini oʻqib boʻlmadi»:** veb-server
+  `/var/log/asterisk/queue_log` faylini oʻqiy olmayapti. Fayl borligini va
+  `asterisk` foydalanuvchisi uni oʻqiy olishini tekshiring
+  (`ls -l /var/log/asterisk/queue_log`).
+- **Qayta qoʻngʻiroqda operator jiringlaydi, lekin mijoz terilmaydi:** raqam
+  hech bir chiquvchi marshrutga mos kelmaydi. `asterisk -rvvv` ni ishga
+  tushiring, «Qayta qoʻngʻiroq» tugmasini bosing va raqam qaysi marshrutga
+  ketishini koʻring.
 
 ## Ishlab chiqish
 

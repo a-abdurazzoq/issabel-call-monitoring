@@ -32,6 +32,7 @@ function _moduleContent(&$smarty, $module_name)
     require_once "modules/$module_name/libs/paloInterfaceSSE.class.php";
     require_once "modules/$module_name/libs/paloServerSentEvents.class.php";
     require_once "modules/$module_name/libs/paloControlPanelUtils.class.php";
+    require_once "modules/$module_name/libs/paloControlPanelMissed.class.php";
 
 
     load_language_module($module_name);
@@ -140,7 +141,7 @@ function _writeActions()
     return array(
         'updateExtensionPanel', 'updatePanelDesc', 'updatePanelSize',
         'callExtension', 'hangupExtension', 'voicemailExtension',
-        'resetQueueStats', 'queuePause', 'pbxStatusShutdown',
+        'resetQueueStats', 'queuePause', 'callbackStart', 'pbxStatusShutdown',
         'spyStart', 'spyStop', 'spyMode',
     );
 }
@@ -267,6 +268,27 @@ function handleHTML_mainReport($smarty, $module_name, $local_templates_dir)
             'LBL_PAUSE_CONFIRM' =>  _tr('Pause agent %s in all queues? The agent will stop getting queue calls.'),
             'LBL_UNPAUSE_CONFIRM' => _tr('Unpause agent %s in all queues? The agent will start getting queue calls.'),
             'LBL_WALLBOARD_EXIT'=>  _tr('Exit TV mode'),
+            // Missed calls of today and callbacks
+            'LBL_MC_TITLE'      =>  _tr('Missed calls today'),
+            'LBL_MC_EMPTY'      =>  _tr('No missed calls today'),
+            'LBL_MC_TO_CALL'    =>  _tr('To call back'),
+            'LBL_MC_CALL'       =>  _tr('Call back'),
+            'LBL_MC_DIALOG'     =>  _tr('Call back %s'),
+            'LBL_MC_FREE'       =>  _tr('Free agents'),
+            'LBL_MC_NO_FREE'    =>  _tr('No free agents right now'),
+            'LBL_MC_HINT'       =>  _tr('The phone of the agent rings first; when the agent answers, the customer is dialled.'),
+            'LBL_MC_TIMES'      =>  _tr('Called %s times'),
+            'LBL_MC_WAITED'     =>  _tr('Waited'),
+            'LBL_MC_QUEUE'      =>  _tr('Queue'),
+            'LBL_MC_ABANDON'    =>  _tr('Hung up while waiting'),
+            'LBL_MC_TIMEOUT'    =>  _tr('Waiting time ran out'),
+            'LBL_MC_EMPTYQ'     =>  _tr('No agents in the queue'),
+            'LBL_MC_KEY'        =>  _tr('Left the queue with a key'),
+            'LBL_MC_REACHED'    =>  _tr('Reached %s · %s'),
+            'LBL_MC_CALLING'    =>  _tr('Calling back: %s…'),
+            'LBL_MC_NOT_REACHED'=>  _tr('Not reached ×%s · last %s'),
+            'LBL_MC_FAILED'     =>  _tr('Failed to call back'),
+            'LBL_MC_NO_CDR'     =>  _tr('The call history (CDR) is not available: callbacks are not checked'),
             // Call listening
             'LBL_SPY_BTN_TITLE' =>  _tr('Listen to this agent'),
             'LBL_SPY_TITLE'     =>  _tr('Listen to agent %s'),
@@ -538,6 +560,49 @@ function handleJSON_queuePause($smarty, $module_name, $local_templates_dir)
         }
     }
 
+    $json = new Services_JSON();
+    Header('Content-Type: application/json');
+    return $json->encode($respuesta);
+}
+
+/* Missed queue calls of today, one entry per number (read only, GET). */
+function handleJSON_missedCalls($smarty, $module_name, $local_templates_dir)
+{
+    session_write_close();  // file and database reads must not block the snapshots
+    $respuesta = array('status' => 'success', 'message' => '(no message)');
+    $since = (isset($_GET['since']) && preg_match('/^[0-9]{9,11}$/', $_GET['since']))
+        ? (int)$_GET['since'] : NULL;
+    $pMissed = new paloControlPanelMissed();
+    $data = $pMissed->missedToday($since);
+    if (is_null($data)) {
+        $respuesta['status'] = 'error';
+        $respuesta['message'] = $pMissed->errMsg;
+    } else {
+        $respuesta['calls'] = $data['calls'];
+        $respuesta['cdr'] = $data['cdr'];
+        $respuesta['now'] = time();
+    }
+    $json = new Services_JSON();
+    Header('Content-Type: application/json');
+    return $json->encode($respuesta);
+}
+
+/* Call back a missed caller from an agent's phone (POST: number, agent). */
+function handleJSON_callbackStart($smarty, $module_name, $local_templates_dir)
+{
+    $respuesta = array('status' => 'success', 'message' => '(no message)');
+    $user = isset($_SESSION['issabel_user']) ? $_SESSION['issabel_user'] : '';
+    session_write_close();
+    if (!isset($_REQUEST['number']) || !isset($_REQUEST['agent'])) {
+        $respuesta['status'] = 'error';
+        $respuesta['message'] = _tr('Invalid or missing parameters');
+    } else {
+        $pUtils = new paloControlPanelUtils();
+        if (!$pUtils->callbackStart($_REQUEST['number'], $_REQUEST['agent'], $user)) {
+            $respuesta['status'] = 'error';
+            $respuesta['message'] = $pUtils->errMsg;
+        }
+    }
     $json = new Services_JSON();
     Header('Content-Type: application/json');
     return $json->encode($respuesta);

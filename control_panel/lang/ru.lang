@@ -88,6 +88,46 @@ $arrLangModule = array(
         => "Супервизор",
     "Failed to change the pause of the agent"
         => "Не удалось изменить паузу оператора",
+    "Missed calls today"
+        => "Пропущенные звонки за сегодня",
+    "No missed calls today"
+        => "Сегодня пропущенных звонков нет",
+    "To call back"
+        => "Нужно перезвонить",
+    "Call back"
+        => "Перезвонить",
+    "Call back %s"
+        => "Перезвонить %s",
+    "Free agents"
+        => "Свободные операторы",
+    "No free agents right now"
+        => "Сейчас нет свободных операторов",
+    "The phone of the agent rings first; when the agent answers, the customer is dialled."
+        => "Сначала зазвонит телефон оператора; когда он возьмёт трубку, наберётся клиент.",
+    "Called %s times"
+        => "Звонил %s раз",
+    "Waited"
+        => "Ждал",
+    "Hung up while waiting"
+        => "Не дождался ответа",
+    "Waiting time ran out"
+        => "Истекло время ожидания",
+    "No agents in the queue"
+        => "В очереди не было операторов",
+    "Left the queue with a key"
+        => "Вышел из очереди по кнопке",
+    "Reached %s · %s"
+        => "Дозвонились %s · %s",
+    "Calling back: %s…"
+        => "Перезванивает %s…",
+    "Not reached ×%s · last %s"
+        => "Не дозвонились ×%s · последний раз %s",
+    "Failed to call back"
+        => "Не удалось перезвонить",
+    "The call history (CDR) is not available: callbacks are not checked"
+        => "История звонков (CDR) недоступна: перезвоны не проверяются",
+    "Cannot read the queue log"
+        => "Не удалось прочитать журнал очередей",
 
     // Прослушка звонков (ChanSpy)
     "Listen to this agent"          => "Прослушать оператора",

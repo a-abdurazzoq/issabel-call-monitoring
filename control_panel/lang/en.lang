@@ -89,6 +89,46 @@ $arrLangModule = array(
         => "Supervisor",
     "Failed to change the pause of the agent"
         => "Failed to change the pause of the agent",
+    "Missed calls today"
+        => "Missed calls today",
+    "No missed calls today"
+        => "No missed calls today",
+    "To call back"
+        => "To call back",
+    "Call back"
+        => "Call back",
+    "Call back %s"
+        => "Call back %s",
+    "Free agents"
+        => "Free agents",
+    "No free agents right now"
+        => "No free agents right now",
+    "The phone of the agent rings first; when the agent answers, the customer is dialled."
+        => "The phone of the agent rings first; when the agent answers, the customer is dialled.",
+    "Called %s times"
+        => "Called %s times",
+    "Waited"
+        => "Waited",
+    "Hung up while waiting"
+        => "Hung up while waiting",
+    "Waiting time ran out"
+        => "Waiting time ran out",
+    "No agents in the queue"
+        => "No agents in the queue",
+    "Left the queue with a key"
+        => "Left the queue with a key",
+    "Reached %s · %s"
+        => "Reached %s · %s",
+    "Calling back: %s…"
+        => "Calling back: %s…",
+    "Not reached ×%s · last %s"
+        => "Not reached ×%s · last %s",
+    "Failed to call back"
+        => "Failed to call back",
+    "The call history (CDR) is not available: callbacks are not checked"
+        => "The call history (CDR) is not available: callbacks are not checked",
+    "Cannot read the queue log"
+        => "Cannot read the queue log",
 
     // Call listening (ChanSpy)
     "Listen to this agent"          => "Listen to this agent",
