@@ -1,0 +1,9 @@
+<?php
+/*
+  Название пункта меню для Issabel на русском. Issabel подключает
+  modules/<модуль>/langmenu/<язык>.lang перед тем, как строить меню, и переводит
+  desc из control.xml через этот массив.
+*/
+$arrLangMenu = array(
+    "Call Monitoring" => "Мониторинг вызовов",
+);

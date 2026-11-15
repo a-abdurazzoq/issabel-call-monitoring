@@ -28,6 +28,7 @@ control_panel/              the module, copied to /var/www/html/modules/control_
     css/style.css           styles
   lang/en, ru, uz .lang     UI strings (en.lang holds every key)
   help/en, ru, uz .hlp      built-in help (the "?" button in Issabel)
+  langmenu/ru, uz .lang     menu item name in the Issabel sidebar
   images/                   icons used by the page
 docs/                       documentation and screenshots
 ```
@@ -182,6 +183,13 @@ The help window is served by Issabel itself (`help/frameRight.php`), which picks
 Issabel's language list has no Uzbek, so `help/uz.hlp` is shown only if `uz` is
 added to that list and selected in Issabel; otherwise the help is in the
 Issabel language or in English.
+
+The menu item in the Issabel sidebar is translated separately. Before it builds
+the menu, Issabel includes `modules/<module>/langmenu/<lang>.lang` of every
+module for the system language and translates the `desc` from `control.xml`
+with its `$arrLangMenu`. English needs no file, `desc` is already English. The
+module switcher does not change the menu: it follows the Issabel language like
+the rest of the sidebar.
 
 ## Conventions
 

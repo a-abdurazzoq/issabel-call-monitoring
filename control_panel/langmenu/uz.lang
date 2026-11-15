@@ -1,0 +1,9 @@
+<?php
+/*
+  Issabel menyusidagi band nomi (oʻzbekcha). Issabel menyuni qurishdan oldin
+  modules/<modul>/langmenu/<til>.lang fayllarini ulaydi va control.xml dagi desc ni
+  shu massiv orqali tarjima qiladi. Faqat Issabel tili uz boʻlganda ishlaydi.
+*/
+$arrLangMenu = array(
+    "Call Monitoring" => "Qoʻngʻiroqlar monitoringi",
+);
