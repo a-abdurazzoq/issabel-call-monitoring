@@ -1,0 +1,24 @@
+<html>
+    <header>
+        <link rel="stylesheet" href="/themes/{$THEMENAME}/styles.css">
+        <link rel="stylesheet" href="/themes/{$THEMENAME}/help.css">
+    </header>
+    <body>
+        <h1>{$node_name}</h1>
+        <p align="Justify">"Call Monitoring" (menu PBX) shows the state of the PBX in real time: extensions and their active calls, call queues with their agents and waiting customers, and trunks. The page refreshes about once a second.</p>
+
+        <h2>Status bar</h2>
+        <p align="Justify">Connection to the PBX, the number of extensions online and offline. "Sound" turns on a beep when a customer waits too long in a queue; "Notifications" shows a desktop notification for that while the page is in the background (HTTPS only).</p>
+
+        <h2>Queue card</h2>
+        <p align="Justify">Answered and abandoned calls, customers waiting, the longest wait, the service level (SLA), the abandon rate, the average wait and talk time. Asterisk counts these since the last statistics reset (the round arrow in the card header) or the last Asterisk restart.</p>
+        <p align="Justify">Agents show their state, the calls taken and how long they have been in that state. A row turns red after a long pause or a long call. The sort icon next to "Agents" switches between sorting by state and by number. Waiting customers turn yellow and then red the longer they wait.</p>
+
+        <h2>Listening to a call</h2>
+        <p align="Justify">The headphones icon appears next to an agent who is in a call. Enter the number to be called at (your extension or an external number) and choose a mode: Listen (nobody hears you), Whisper (only the agent hears you) or Barge in (both hear you). Answer the call to start listening. The bar at the bottom switches the mode or hangs up; during the call the phone keys 4, 5 and 6 switch the mode as well.</p>
+
+        <div class="hlp_figures"><img src="../modules/{$node_id}/images/hlp_operator_panel.png" border="0" />
+	<p>Figure 1</p></div>
+	<p></p>
+    </body>
+</html>

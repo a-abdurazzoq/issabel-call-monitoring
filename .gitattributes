@@ -1,0 +1,7 @@
+# The module runs on Linux: keep LF line endings everywhere,
+# also in Windows working copies (a CRLF install.sh fails in bash).
+* text=auto eol=lf
+
+*.png binary
+*.gif binary
+*.jpg binary

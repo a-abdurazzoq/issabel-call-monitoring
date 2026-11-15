@@ -1,0 +1,13 @@
+# Local helpers, not part of the published module
+update.sh
+change_list.txt
+CLAUDE.md
+
+# Local test harness
+tests/
+
+# OS / editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -1,0 +1,146 @@
+<?php
+/*
+  Русские строки модуля Call Monitoring (control_panel).
+  Используются, когда в Issabel выбран русский язык; отсутствующие ключи
+  берутся из en.lang.
+*/
+global $arrLangModule;
+$arrLangModule = array(
+    // Заголовок модуля
+    "Control Panel"                 => "Мониторинг вызовов",
+
+    // Заголовки панелей (хранятся в таблице area, переводятся через _tr())
+    "Extensions"                    => "Внутренние номера",
+    "Queues"                        => "Очереди",
+    "Conferences"                   => "Конференции",
+    "Parking lots"                  => "Парковка вызовов",
+    "SIP/IAX Trunks"                => "Транки SIP/IAX",
+    "DAHDI Trunks"                  => "Транки DAHDI",
+    "Area 1"                        => "Область 1",
+    "Area 2"                        => "Область 2",
+    "Area 3"                        => "Область 3",
+    "Area 4"                        => "Область 4",
+    "Area 5"                        => "Область 5",
+    "Area 6"                        => "Область 6",
+    "Area 7"                        => "Область 7",
+    "Area 8"                        => "Область 8",
+    "Area 9"                        => "Область 9",
+
+    // Строка состояния
+    "Connected"                     => "Подключено",
+    "Connecting..."                 => "Подключение...",
+    "Extensions Online"             => "Номеров в сети",
+    "Extensions Offline"            => "Номеров не в сети",
+
+    // Карточка очереди
+    "Queue"                         => "Очередь",
+    "Reset statistics"              => "Сбросить статистику",
+    "Answered"                      => "Отвечено",
+    "Abandoned"                     => "Пропущено",
+    "Agents"                        => "Операторы",
+    "Customers in Queue"            => "Клиентов в очереди",
+    "Members"                       => "Участники",
+    "Not Attended"                  => "Не обслуживается",
+    "Callers"                       => "Звонящие",
+    "No Callers"                    => "Никто не ожидает",
+    "Waiting"                       => "Ожидают",
+    "Longest wait"                  => "Дольше всех ждёт",
+    "Abandon rate"                  => "% пропущенных",
+    "Avg wait"                      => "Ср. ожидание",
+    "Avg talk"                      => "Ср. разговор",
+    "sec"                           => "с",
+    "Share of calls answered within the service level time" => "Доля звонков, принятых в пределах норматива (Service Level)",
+    "Running average since the last statistics reset"       => "Скользящее среднее с момента последнего сброса статистики",
+    "Calls taken since the last statistics reset"           => "Принято звонков с момента последнего сброса статистики",
+    "Sound"                         => "Звук",
+    "Sound alert is on: beep when a caller waits longer than %s s"
+        => "Звуковой сигнал включён: сигнал, если клиент ждёт дольше %s с",
+    "Sound alert is off. Click to beep when a caller waits longer than %s s"
+        => "Звуковой сигнал выключен. Нажмите, чтобы получать сигнал, если клиент ждёт дольше %s с",
+    "No agents"                     => "Нет операторов",
+    "Notifications"                 => "Уведомления",
+    "Desktop notifications are on: shown when a caller waits longer than %s s and this page is in the background"
+        => "Уведомления включены: показываются, если клиент ждёт дольше %s с, а эта страница в фоне",
+    "Desktop notifications are off. Click to get a notification when a caller waits longer than %s s"
+        => "Уведомления выключены. Нажмите, чтобы получать уведомление, если клиент ждёт дольше %s с",
+    "Notifications are blocked for this site in the browser settings."
+        => "Уведомления для этого сайта запрещены в настройках браузера.",
+    "Caller waiting %s"             => "Клиент ждёт %s",
+    "Queue %s"                      => "Очередь %s",
+    "Sorted by state: free first. Click to sort by number" => "Сортировка по состоянию: сначала свободные. Нажмите, чтобы сортировать по номеру",
+    "Sorted by number. Click to sort by state"             => "Сортировка по номеру. Нажмите, чтобы сортировать по состоянию",
+
+    // Прослушка звонков (ChanSpy)
+    "Listen to this agent"          => "Прослушать оператора",
+    "Listen to agent %s"            => "Прослушка оператора %s",
+    "Call me at"                    => "На какой номер вам позвонить",
+    "Your extension or external number" => "Ваш внутренний или внешний номер",
+    "Recent numbers"                => "Недавние номера",
+    "Numbers you call will be remembered here" => "Здесь появятся номера, на которые вы звонили",
+    "Remove"                        => "Удалить",
+    "Listen"                        => "Слушать",
+    "Whisper"                       => "Подсказать",
+    "Barge in"                      => "Вмешаться",
+    "You hear the agent and the customer, nobody hears you" => "Вы слышите оператора и клиента, вас никто не слышит",
+    "Only the agent hears you"      => "Вас слышит только оператор",
+    "Three-way call: both hear you" => "Разговор втроём: вас слышат оба",
+    "During the call the mode can also be switched with the phone keys: 4 listen, 5 whisper, 6 barge in"
+        => "Во время прослушки режим можно переключать и кнопками телефона: 4 — слушать, 5 — подсказать, 6 — вмешаться",
+    "Call me"                       => "Позвонить мне",
+    "Cancel"                        => "Отмена",
+    "Hang up"                       => "Завершить",
+    "Listening to %s"               => "Прослушка %s",
+    "Calling %s…"                   => "Звоню на %s…",
+    "Call connected"                => "На связи",
+    "Ended"                         => "Завершено",
+    "Enter a number: digits, *, # or a leading + (2-20 characters)"
+        => "Введите номер: цифры, *, # или + в начале (от 2 до 20 символов)",
+    "Failed to start listening"     => "Не удалось начать прослушку",
+    "The agent is not in a call anymore" => "Оператор уже не разговаривает",
+    "This Asterisk version cannot switch the mode during the call. Call you again in the new mode? (You can also press 4/5/6 on the phone.)"
+        => "Эта версия Asterisk не умеет переключать режим во время звонка. Перезвонить вам в новом режиме? (Можно также нажать 4/5/6 на телефоне.)",
+    "Invalid agent"                 => "Неверный номер оператора",
+    "Invalid number"                => "Неверный номер",
+    "Enter your own number, not the agent's" => "Укажите свой номер, а не номер оператора",
+    "The agent has no phone device" => "У оператора нет телефонного устройства",
+    "The listening call has ended"  => "Звонок прослушки уже завершён",
+    "Failed to switch the listening mode" => "Не удалось переключить режим прослушки",
+
+    // Состояния операторов очереди
+    "Available"                     => "Свободен",
+    "In use"                        => "Разговаривает",
+    "Busy"                          => "Занят",
+    "Invalid"                       => "Неверное устройство",
+    "Unavailable"                   => "Недоступен",
+    "Ringing"                       => "Звонит",
+    "Ringing, in use"               => "Звонит, занят",
+    "On Hold"                       => "На удержании",
+    "Paused"                        => "На паузе",
+
+    // Прочие панели
+    "Participant(s)"                => "Участник(и)",
+    "Parked"                        => "Припаркован",
+    "idle"                          => "свободен",
+    "ext"                           => "ном.",
+    "New"                           => "Новые",
+    "Old"                           => "Старые",
+    "Edit Name"                     => "Изменить название",
+    "Save"                          => "Сохранить",
+    "Hide All"                      => "Скрыть все",
+    "Show All"                      => "Показать все",
+
+    // Ошибки
+    "Error when connecting to Asterisk Manager"         => "Ошибка подключения к Asterisk Manager",
+    "Invalid or missing parameters"                     => "Неверные или отсутствующие параметры",
+    "Unimplemented method"                              => "Метод не реализован",
+    "Invalid source for call"                           => "Неверный номер источника вызова",
+    "Invalid target for call"                           => "Неверный номер назначения вызова",
+    "No active channels for target"                     => "У номера нет активных каналов",
+    "Failed to query dialchannel for source extension"  => "Не удалось получить канал набора для номера источника",
+    "(internal) Failed to list channels"                => "(внутренняя ошибка) Не удалось получить список каналов",
+    "(internal) Failed to hangup active channel for target" => "(внутренняя ошибка) Не удалось завершить активный канал номера",
+    "Invalid queue"                                     => "Неверная очередь",
+    "Failed to reset queue statistics"                  => "Не удалось сбросить статистику очереди",
+    "Request rejected: it must be sent from the Call Monitoring page" => "Запрос отклонён: он должен отправляться со страницы «Мониторинг вызовов»",
+);
+?>

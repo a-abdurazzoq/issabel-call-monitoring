@@ -1,0 +1,147 @@
+<?php
+/*
+  English strings for the Call Monitoring (control_panel) module.
+  Issabel loads this file first and then merges the file for the user's
+  language (e.g. ru.lang) over it, so every key used by the module is listed
+  here.
+*/
+global $arrLangModule;
+$arrLangModule = array(
+    // Module title
+    "Control Panel"                 => "Call Monitoring",
+
+    // Panel titles (stored in the area table, translated via _tr())
+    "Extensions"                    => "Extensions",
+    "Queues"                        => "Queues",
+    "Conferences"                   => "Conferences",
+    "Parking lots"                  => "Parking lots",
+    "SIP/IAX Trunks"                => "SIP/IAX Trunks",
+    "DAHDI Trunks"                  => "DAHDI Trunks",
+    "Area 1"                        => "Area 1",
+    "Area 2"                        => "Area 2",
+    "Area 3"                        => "Area 3",
+    "Area 4"                        => "Area 4",
+    "Area 5"                        => "Area 5",
+    "Area 6"                        => "Area 6",
+    "Area 7"                        => "Area 7",
+    "Area 8"                        => "Area 8",
+    "Area 9"                        => "Area 9",
+
+    // Status bar
+    "Connected"                     => "Connected",
+    "Connecting..."                 => "Connecting...",
+    "Extensions Online"             => "Extensions Online",
+    "Extensions Offline"            => "Extensions Offline",
+
+    // Queue card
+    "Queue"                         => "Queue",
+    "Reset statistics"              => "Reset statistics",
+    "Answered"                      => "Answered",
+    "Abandoned"                     => "Abandoned",
+    "Agents"                        => "Agents",
+    "Customers in Queue"            => "Customers in Queue",
+    "Members"                       => "Members",
+    "Not Attended"                  => "Not Attended",
+    "Callers"                       => "Callers",
+    "No Callers"                    => "Nobody is waiting",
+    "Waiting"                       => "Waiting",
+    "Longest wait"                  => "Longest wait",
+    "Abandon rate"                  => "Abandon rate",
+    "Avg wait"                      => "Avg wait",
+    "Avg talk"                      => "Avg talk",
+    "sec"                           => "s",
+    "Share of calls answered within the service level time" => "Share of calls answered within the service level time",
+    "Running average since the last statistics reset"       => "Running average since the last statistics reset",
+    "Calls taken since the last statistics reset"           => "Calls taken since the last statistics reset",
+    "Sound"                         => "Sound",
+    "Sound alert is on: beep when a caller waits longer than %s s"
+        => "Sound alert is on: beep when a caller waits longer than %s s",
+    "Sound alert is off. Click to beep when a caller waits longer than %s s"
+        => "Sound alert is off. Click to beep when a caller waits longer than %s s",
+    "No agents"                     => "No agents",
+    "Notifications"                 => "Notifications",
+    "Desktop notifications are on: shown when a caller waits longer than %s s and this page is in the background"
+        => "Desktop notifications are on: shown when a caller waits longer than %s s and this page is in the background",
+    "Desktop notifications are off. Click to get a notification when a caller waits longer than %s s"
+        => "Desktop notifications are off. Click to get a notification when a caller waits longer than %s s",
+    "Notifications are blocked for this site in the browser settings."
+        => "Notifications are blocked for this site in the browser settings.",
+    "Caller waiting %s"             => "Caller waiting %s",
+    "Queue %s"                      => "Queue %s",
+    "Sorted by state: free first. Click to sort by number" => "Sorted by state: free first. Click to sort by number",
+    "Sorted by number. Click to sort by state"             => "Sorted by number. Click to sort by state",
+
+    // Call listening (ChanSpy)
+    "Listen to this agent"          => "Listen to this agent",
+    "Listen to agent %s"            => "Listen to agent %s",
+    "Call me at"                    => "Call me at",
+    "Your extension or external number" => "Your extension or external number",
+    "Recent numbers"                => "Recent numbers",
+    "Numbers you call will be remembered here" => "Numbers you call will be remembered here",
+    "Remove"                        => "Remove",
+    "Listen"                        => "Listen",
+    "Whisper"                       => "Whisper",
+    "Barge in"                      => "Barge in",
+    "You hear the agent and the customer, nobody hears you" => "You hear the agent and the customer, nobody hears you",
+    "Only the agent hears you"      => "Only the agent hears you",
+    "Three-way call: both hear you" => "Three-way call: both hear you",
+    "During the call the mode can also be switched with the phone keys: 4 listen, 5 whisper, 6 barge in"
+        => "During the call the mode can also be switched with the phone keys: 4 listen, 5 whisper, 6 barge in",
+    "Call me"                       => "Call me",
+    "Cancel"                        => "Cancel",
+    "Hang up"                       => "Hang up",
+    "Listening to %s"               => "Listening to %s",
+    "Calling %s…"                   => "Calling %s…",
+    "Call connected"                => "Call connected",
+    "Ended"                         => "Ended",
+    "Enter a number: digits, *, # or a leading + (2-20 characters)"
+        => "Enter a number: digits, *, # or a leading + (2-20 characters)",
+    "Failed to start listening"     => "Failed to start listening",
+    "The agent is not in a call anymore" => "The agent is not in a call anymore",
+    "This Asterisk version cannot switch the mode during the call. Call you again in the new mode? (You can also press 4/5/6 on the phone.)"
+        => "This Asterisk version cannot switch the mode during the call. Call you again in the new mode? (You can also press 4/5/6 on the phone.)",
+    "Invalid agent"                 => "Invalid agent",
+    "Invalid number"                => "Invalid number",
+    "Enter your own number, not the agent's" => "Enter your own number, not the agent's",
+    "The agent has no phone device" => "The agent has no phone device",
+    "The listening call has ended"  => "The listening call has ended",
+    "Failed to switch the listening mode" => "Failed to switch the listening mode",
+
+    // Queue agent states
+    "Available"                     => "Available",
+    "In use"                        => "In use",
+    "Busy"                          => "Busy",
+    "Invalid"                       => "Invalid",
+    "Unavailable"                   => "Unavailable",
+    "Ringing"                       => "Ringing",
+    "Ringing, in use"               => "Ringing, in use",
+    "On Hold"                       => "On Hold",
+    "Paused"                        => "Paused",
+
+    // Other panels
+    "Participant(s)"                => "Participant(s)",
+    "Parked"                        => "Parked",
+    "idle"                          => "idle",
+    "ext"                           => "ext",
+    "New"                           => "New",
+    "Old"                           => "Old",
+    "Edit Name"                     => "Edit Name",
+    "Save"                          => "Save",
+    "Hide All"                      => "Hide All",
+    "Show All"                      => "Show All",
+
+    // Errors
+    "Error when connecting to Asterisk Manager"         => "Error when connecting to Asterisk Manager",
+    "Invalid or missing parameters"                     => "Invalid or missing parameters",
+    "Unimplemented method"                              => "Unimplemented method",
+    "Invalid source for call"                           => "Invalid source for call",
+    "Invalid target for call"                           => "Invalid target for call",
+    "No active channels for target"                     => "No active channels for target",
+    "Failed to query dialchannel for source extension"  => "Failed to query dial channel for source extension",
+    "(internal) Failed to list channels"                => "(internal) Failed to list channels",
+    "(internal) Failed to hangup active channel for target" => "(internal) Failed to hang up active channel for target",
+    "Invalid queue"                                     => "Invalid queue",
+    "Failed to reset queue statistics"                  => "Failed to reset queue statistics",
+    "Request rejected: it must be sent from the Call Monitoring page" => "Request rejected: it must be sent from the Call Monitoring page",
+);
+?>
