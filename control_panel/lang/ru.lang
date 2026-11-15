@@ -70,6 +70,24 @@ $arrLangModule = array(
     "Queue %s"                      => "Очередь %s",
     "Sorted by state: free first. Click to sort by number" => "Сортировка по состоянию: сначала свободные. Нажмите, чтобы сортировать по номеру",
     "Sorted by number. Click to sort by state"             => "Сортировка по номеру. Нажмите, чтобы сортировать по состоянию",
+    "TV mode"
+        => "Табло",
+    "Full-screen view for a TV in the call center room: queues only, large numbers, no buttons"
+        => "Вид на весь экран для телевизора в зале операторов: только очереди, крупные цифры, без кнопок",
+    "Exit TV mode"
+        => "Выйти из режима табло",
+    "Pause this agent in all queues"
+        => "Поставить оператора на паузу во всех очередях",
+    "Unpause this agent in all queues"
+        => "Снять оператора с паузы во всех очередях",
+    "Pause agent %s in all queues? The agent will stop getting queue calls."
+        => "Поставить оператора %s на паузу во всех очередях? Ему перестанут поступать звонки из очередей.",
+    "Unpause agent %s in all queues? The agent will start getting queue calls."
+        => "Снять оператора %s с паузы во всех очередях? Ему снова начнут поступать звонки из очередей.",
+    "Supervisor"
+        => "Супервизор",
+    "Failed to change the pause of the agent"
+        => "Не удалось изменить паузу оператора",
 
     // Прослушка звонков (ChanSpy)
     "Listen to this agent"          => "Прослушать оператора",

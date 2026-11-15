@@ -71,6 +71,24 @@ $arrLangModule = array(
     "Queue %s"                      => "Queue %s",
     "Sorted by state: free first. Click to sort by number" => "Sorted by state: free first. Click to sort by number",
     "Sorted by number. Click to sort by state"             => "Sorted by number. Click to sort by state",
+    "TV mode"
+        => "TV mode",
+    "Full-screen view for a TV in the call center room: queues only, large numbers, no buttons"
+        => "Full-screen view for a TV in the call center room: queues only, large numbers, no buttons",
+    "Exit TV mode"
+        => "Exit TV mode",
+    "Pause this agent in all queues"
+        => "Pause this agent in all queues",
+    "Unpause this agent in all queues"
+        => "Unpause this agent in all queues",
+    "Pause agent %s in all queues? The agent will stop getting queue calls."
+        => "Pause agent %s in all queues? The agent will stop getting queue calls.",
+    "Unpause agent %s in all queues? The agent will start getting queue calls."
+        => "Unpause agent %s in all queues? The agent will start getting queue calls.",
+    "Supervisor"
+        => "Supervisor",
+    "Failed to change the pause of the agent"
+        => "Failed to change the pause of the agent",
 
     // Call listening (ChanSpy)
     "Listen to this agent"          => "Listen to this agent",

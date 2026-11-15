@@ -287,6 +287,38 @@ class paloControlPanelUtils
         return TRUE;
     }
 
+    /**
+     * Pause or unpause a queue member in all of its queues (AMI QueuePause
+     * without Queue), as the agent's own pause toggle does. A pause gets the
+     * reason "supervisor", shown in the agent row like any pause reason.
+     *
+     * @param   string  $interface  Member interface, e.g. PJSIP/102 or
+     *                              Local/102@from-queue/n
+     * @param   bool    $paused
+     */
+    function queuePause($interface, $paused)
+    {
+        if (!is_string($interface) || !preg_match('#^[A-Za-z0-9_]+/[A-Za-z0-9_@.+\-/]{1,80}$#', $interface)) {
+            $this->errMsg = _tr('Invalid agent');
+            return FALSE;
+        }
+        $ami = $this->_amiConnect();
+        if (is_null($ami)) return FALSE;
+        $request = array(
+            'Interface' => $interface,
+            'Paused'    => $paused ? 'true' : 'false',
+        );
+        if ($paused) $request['Reason'] = str_replace(array("\r", "\n"), ' ', _tr('Supervisor'));
+        $r = $ami->send_request('QueuePause', $request);
+        $ami->disconnect();
+        if (!is_array($r) || !isset($r['Response']) || $r['Response'] != 'Success') {
+            $this->errMsg = _tr('Failed to change the pause of the agent');
+            if (is_array($r) && isset($r['Message'])) $this->errMsg .= ': '.$r['Message'];
+            return FALSE;
+        }
+        return TRUE;
+    }
+
     /**************************************************************************
      * Call listening (ChanSpy), started from the queue card.
      *

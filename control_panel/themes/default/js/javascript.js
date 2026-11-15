@@ -1595,6 +1595,7 @@ function renderInitialQueues(queues) {
             var location = member.Interface || '';
             return {
                 Name: member.MemberName,
+                Interface: location,
                 Location: location.substring(location.indexOf('/') + 1).split('@')[0],
                 Status: member.Status,
                 Paused: member.Paused,
@@ -1713,7 +1714,41 @@ function agentRowHTML(queue, number, name, member) {
         html += '<span class="agent-spy" title="' + escapeHtml(tr('LBL_SPY_BTN_TITLE', 'Listen to this agent')) +
             '" onclick="openSpyDialog(this)"><i class="fa fa-headphones"></i></span>';
     }
+    // Pause / unpause by the supervisor (all queues of the agent). Not for
+    // an unavailable phone, unless it is paused and has to be unpaused.
+    var paused = member.Paused != null && String(member.Paused) !== '0';
+    if (member.Interface && (paused || (st.cls !== 'st-offline' && st.cls !== 'st-error'))) {
+        html += '<span class="agent-pause' + (paused ? ' is-paused' : '') + '" data-iface="' +
+            escapeHtml(member.Interface) + '" data-paused="' + (paused ? '1' : '0') + '" title="' +
+            escapeHtml(paused ? tr('LBL_UNPAUSE_TITLE', 'Unpause this agent in all queues')
+                              : tr('LBL_PAUSE_TITLE', 'Pause this agent in all queues')) +
+            '" onclick="toggleAgentPause(this)"><i class="fa ' + (paused ? 'fa-play' : 'fa-pause') + '"></i></span>';
+    } else {
+        // Empty slot keeps the status text of all rows in one column
+        html += '<span class="agent-pause is-none"><i class="fa fa-pause"></i></span>';
+    }
     return html;
+}
+
+// Pause button of an agent row: AMI QueuePause in all queues of the agent.
+// The next snapshot (about a second later) redraws the row.
+function toggleAgentPause(el) {
+    var iface = el.getAttribute('data-iface'), pause = el.getAttribute('data-paused') !== '1';
+    var row = $(el).closest('.agent-container');
+    var who = $.trim(row.find('.agent-num').text() + ' ' + row.find('.agent-name').text()) || iface;
+    var question = pause
+        ? tr('LBL_PAUSE_CONFIRM', 'Pause agent %s in all queues?')
+        : tr('LBL_UNPAUSE_CONFIRM', 'Unpause agent %s in all queues?');
+    if (!confirm(question.replace('%s', who))) return;
+    $(el).addClass('is-working');
+    $.post('index.php?menu=' + module_name + '&rawmode=yes', {
+        menu: module_name, rawmode: 'yes', action: 'queuePause',
+        'interface': iface, paused: pause ? '1' : '0'
+    }, function(respuesta) {
+        verificar_error_session(respuesta);
+        $(el).removeClass('is-working');
+        if (respuesta.status !== 'success') alert(respuesta.message);
+    }, 'json').fail(function() { $(el).removeClass('is-working'); });
 }
 
 function agentInCall(member) {
@@ -2352,3 +2387,83 @@ function setModuleLanguage(code) {
     document.cookie = 'cp_lang=' + code + '; path=/; max-age=31536000; SameSite=Lax';
     location.reload();
 }
+
+//////////////////////////////// TV MODE (WALLBOARD) ////////////////////////////////
+// The class cp-wallboard on <html> puts the module over the whole Issabel page
+// (style.css: queues only, large, no buttons). The URL gets wallboard=1, so a
+// TV can open that link directly and a reload keeps the mode. Full screen
+// needs a click (browser rule): from the button, or F11 on the TV.
+
+var wallboardOn = false, wallboardFullscreen = false, wallboardClock = null;
+
+function wallboardSetUrl(on) {
+    var params = location.search.replace(/^\?/, '').split('&').filter(function(p) {
+        return p && p !== 'wallboard=1';
+    });
+    if (on) params.push('wallboard=1');
+    try {
+        history.replaceState(null, '', location.pathname + (params.length ? '?' + params.join('&') : '') + location.hash);
+    } catch (e) {}
+}
+
+function fullscreenElement() {
+    return document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement || null;
+}
+
+function callQuietly(fn, target) {
+    if (!fn) return;
+    try { var p = fn.call(target); if (p && p.catch) p.catch(function() {}); } catch (e) {}
+}
+
+function ensureWallboardBar() {
+    if (document.getElementById('cp-wb-bar')) return;
+    $('body').append(
+        '<div id="cp-wb-bar" class="cp-wb-bar">' +
+            '<span id="cp-wb-clock" class="cp-wb-clock"></span>' +
+            '<span class="cp-wb-exit" onclick="toggleWallboard(false)" title="' +
+                escapeHtml(tr('LBL_WALLBOARD_EXIT', 'Exit TV mode')) + '"><i class="fa fa-times"></i></span>' +
+        '</div>');
+}
+
+function updateWallboardClock() {
+    var el = document.getElementById('cp-wb-clock');
+    if (!el) return;
+    var d = new Date(serverNow());
+    el.textContent = (d.getHours() < 10 ? '0' : '') + d.getHours() + ':' + (d.getMinutes() < 10 ? '0' : '') + d.getMinutes();
+}
+
+function toggleWallboard(on, noFullscreen) {
+    if (typeof on !== 'boolean') on = !wallboardOn;
+    wallboardOn = on;
+    $('html').toggleClass('cp-wallboard', on);
+    wallboardSetUrl(on);
+    if (on) {
+        ensureWallboardBar();
+        updateWallboardClock();
+        if (!wallboardClock) wallboardClock = setInterval(updateWallboardClock, 1000);
+        if (!noFullscreen && !fullscreenElement()) {
+            var el = document.documentElement;
+            callQuietly(el.requestFullscreen || el.webkitRequestFullscreen || el.msRequestFullscreen, el);
+        }
+    } else {
+        if (wallboardClock) { clearInterval(wallboardClock); wallboardClock = null; }
+        if (fullscreenElement())
+            callQuietly(document.exitFullscreen || document.webkitExitFullscreen || document.msExitFullscreen, document);
+    }
+}
+
+// Leaving full screen (Esc) also leaves TV mode, if TV mode had entered it
+$(document).on('fullscreenchange webkitfullscreenchange MSFullscreenChange', function() {
+    if (fullscreenElement()) { wallboardFullscreen = true; return; }
+    if (wallboardFullscreen) {
+        wallboardFullscreen = false;
+        if (wallboardOn) toggleWallboard(false);
+    }
+});
+$(document).on('keydown', function(e) {
+    if (wallboardOn && (e.key === 'Escape' || e.keyCode === 27) && !$('#cp-spy-overlay').is(':visible'))
+        toggleWallboard(false);
+});
+$(function() {
+    if (/[?&]wallboard=1(&|$)/.test(location.search)) toggleWallboard(true, true);
+});

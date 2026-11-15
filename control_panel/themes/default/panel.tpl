@@ -27,6 +27,8 @@
             <span id="cp-sound-toggle" class="cp-sound" onclick="toggleWaitSound()"><i class="fa fa-bell-slash"></i> {/literal}{$LBL_SOUND}{literal}</span>
             <!-- Desktop notification for long waits (HTTPS only; hidden by updateNotifyButton when unsupported) -->
             <span id="cp-notify-toggle" class="cp-sound" style="display:none" onclick="toggleDesktopNotify()"><i class="fa fa-desktop"></i> {/literal}{$LBL_NOTIFY}{literal}</span>
+            <!-- TV mode (wallboard): queues only, large, full screen; see toggleWallboard() -->
+            <span id="cp-wallboard-toggle" class="cp-sound" onclick="toggleWallboard()" title="{/literal}{$LBL_WALLBOARD_TITLE}{literal}"><i class="fa fa-television"></i> {/literal}{$LBL_WALLBOARD}{literal}</span>
             <!-- Module language for this browser (cp_lang cookie, see _applyModuleLanguage in index.php) -->
             <span class="cp-langs" title="{/literal}{$LBL_LANGUAGE}{literal}"><i class="fa fa-globe"></i>{/literal}{$CP_LANG_SWITCH}{literal}</span>
 {/literal}

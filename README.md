@@ -18,10 +18,12 @@ queue KPIs, long-wait alarms and call listening, on one page.
   needs attention.
 - **Agents**: state, calls taken and time in the current state. Agents are
   sorted by state (free first) and highlighted after a long pause or a long
-  call.
+  call. The supervisor can pause or unpause an agent from the list.
 - **Long-wait alarm**: waiting customers turn yellow and then red. The browser
   tab shows the number of waiting customers. An optional beep and desktop
   notification fire when someone waits too long.
+- **TV mode**: a full-screen view for a TV in the call center room: queues
+  only, large numbers, no buttons.
 - **Call listening**: listen to an agent's call, whisper to the agent or barge
   in. Asterisk calls you at your own extension or an external number.
 - **English, Russian and Uzbek** interface. The module follows the Issabel
@@ -87,6 +89,7 @@ asterisk -rx "dialplan reload"
 | Extensions Online / Offline | Registered and unregistered extensions |
 | Sound | Beep when a customer waits longer than the alarm time. Browsers allow sound only after a click, so turn it on once with this button. The choice is remembered. |
 | Notifications | Desktop notification for a long wait while the page is in the background. Shown only on HTTPS. |
+| TV mode | Full-screen view for a TV, see [TV mode](#tv-mode). |
 | EN / RU / UZ | Module language for this browser (a cookie). Without a choice the Issabel language is used, or English if Issabel uses a language the module doesn't have. |
 
 ### Queue card
@@ -121,6 +124,26 @@ current state:
 
 A row turns red after a 15-minute pause or a 10-minute call. The sort icon
 next to *Agents* switches between sorting by state and by number.
+
+**Pausing an agent.** Hover over an agent row and click the pause icon at
+the end of it; a paused agent shows a play icon all the time. After a
+confirmation the agent is paused (or unpaused) in **all** of its queues, as
+the agent's own pause key on the phone does. The pause reason is
+*Supervisor*, so the row shows who paused the agent.
+
+### TV mode
+
+![TV mode](docs/images/en/wallboard.png)
+
+The **TV mode** button in the status bar shows only the queues, with large
+numbers and without buttons, over the whole screen. The top right corner
+shows the clock and a × to leave the mode (or press Esc).
+
+For a TV in the call center room, log in to Issabel on the TV's browser and
+open the module with `&wallboard=1` added to the address, for example
+`https://pbx/index.php?menu=control_panel&wallboard=1`. The page opens in TV
+mode right away; press F11 for full screen. The page keeps the Issabel
+session alive while it is open.
 
 ### Call listening
 
@@ -183,8 +206,8 @@ configuration.
   access to the menu item with Issabel group permissions.
 - A listening call can only be checked, switched or hung up by the user who
   started it. Other calls can't be hung up through these requests.
-- Actions that change something (hang up, call, listen, save the layout,
-  reset statistics) are accepted only as POST requests sent from the module's
+- Actions that change something (hang up, call, listen, pause an agent,
+  save the layout, reset statistics) are accepted only as POST requests sent from the module's
   own page. A link or a form on another site can't trigger them through the
   logged-in user's session (CSRF protection).
 - Earlier versions of this module (upstream) shipped `libs/utilities.php`. It

@@ -112,6 +112,26 @@ desktop notification once per waiting caller. The thresholds are the
 | `cp-agent-sort` | Sort agents by state or by number |
 | `cp-spy-recent` | Recent listening numbers |
 
+**Pausing an agent.** The last element of an agent row (`agentRowHTML`) is
+`.agent-pause` with the member interface in `data-iface` (from
+`QueueMember.Interface`/`Location`). `toggleAgentPause()` asks for a
+confirmation and posts `action=queuePause` (`interface`, `paused` 1/0).
+`paloControlPanelUtils::queuePause` sends AMI `QueuePause` **without**
+`Queue`, so the agent is paused in all of its queues, with the reason
+`_tr('Supervisor')`. Rows that can't be paused get an invisible
+`.agent-pause.is-none`, which keeps the status text of all rows in one column.
+
+**TV mode (wallboard).** `toggleWallboard()` adds the class `cp-wallboard` to
+`<html>`; everything else is CSS (`html.cp-wallboard ...` in `style.css`): the
+module root is put `position: fixed` over the whole Issabel page, the
+extension and trunk panels, the status bar (except the connection state) and
+all buttons are hidden, and the queue card gets large fonts. The URL gets
+`wallboard=1` (`history.replaceState`), so the mode survives a reload and a TV
+can open such a link directly. Full screen is requested only from the
+button, because browsers allow it only after a click; leaving full screen
+(Esc) also leaves the mode. The clock and the exit button are a separate
+`#cp-wb-bar` outside the Ember templates.
+
 **Conferences and call parking** were removed from the page. The backend skips
 them too: `$_withConferencesAndParking = FALSE` in `paloControlPanelStatus`.
 The JavaScript controllers `conferences` and `parkinglots` still exist and stay

@@ -140,7 +140,7 @@ function _writeActions()
     return array(
         'updateExtensionPanel', 'updatePanelDesc', 'updatePanelSize',
         'callExtension', 'hangupExtension', 'voicemailExtension',
-        'resetQueueStats', 'pbxStatusShutdown',
+        'resetQueueStats', 'queuePause', 'pbxStatusShutdown',
         'spyStart', 'spyStop', 'spyMode',
     );
 }
@@ -230,6 +230,8 @@ function handleHTML_mainReport($smarty, $module_name, $local_templates_dir)
         'LBL_LANGUAGE'              =>  _tr('Language'),
         'CP_LANG_SWITCH'            =>  _languageSwitchHTML(),
         'LBL_NOTIFY'                =>  _tr('Notifications'),
+        'LBL_WALLBOARD'             =>  _tr('TV mode'),
+        'LBL_WALLBOARD_TITLE'       =>  _tr('Full-screen view for a TV in the call center room: queues only, large numbers, no buttons'),
         'LBL_EXT_SHORT'             =>  _tr('ext'),
         'LBL_IDLE'                  =>  _tr('idle'),
         'ARRLANG_MAIN'              =>  $json->encode(array(
@@ -260,6 +262,11 @@ function handleHTML_mainReport($smarty, $module_name, $local_templates_dir)
             'LBL_NOTIFY_BODY'   =>  _tr('Queue %s'),
             'LBL_SORT_ON_TITLE' =>  _tr('Sorted by state: free first. Click to sort by number'),
             'LBL_SORT_OFF_TITLE'=>  _tr('Sorted by number. Click to sort by state'),
+            'LBL_PAUSE_TITLE'   =>  _tr('Pause this agent in all queues'),
+            'LBL_UNPAUSE_TITLE' =>  _tr('Unpause this agent in all queues'),
+            'LBL_PAUSE_CONFIRM' =>  _tr('Pause agent %s in all queues? The agent will stop getting queue calls.'),
+            'LBL_UNPAUSE_CONFIRM' => _tr('Unpause agent %s in all queues? The agent will start getting queue calls.'),
+            'LBL_WALLBOARD_EXIT'=>  _tr('Exit TV mode'),
             // Call listening
             'LBL_SPY_BTN_TITLE' =>  _tr('Listen to this agent'),
             'LBL_SPY_TITLE'     =>  _tr('Listen to agent %s'),
@@ -499,6 +506,33 @@ function handleJSON_resetQueueStats($smarty, $module_name, $local_templates_dir)
     } else {
         $pUtils = new paloControlPanelUtils();
         if (!$pUtils->resetQueueStats($_REQUEST['queue'])) {
+            $respuesta['status'] = 'error';
+            $respuesta['message'] = $pUtils->errMsg;
+        }
+    }
+
+    $json = new Services_JSON();
+    Header('Content-Type: application/json');
+    return $json->encode($respuesta);
+}
+
+/* Pause or unpause a queue agent in all of its queues (like the agent's own
+ * pause toggle on the phone). interface: member interface from QueueStatus,
+ * paused: 1 or 0. */
+function handleJSON_queuePause($smarty, $module_name, $local_templates_dir)
+{
+    $respuesta = array(
+        'status'    =>  'success',
+        'message'   =>  '(no message)',
+    );
+
+    if (!isset($_REQUEST['interface']) || !isset($_REQUEST['paused']) ||
+        !in_array($_REQUEST['paused'], array('0', '1'), TRUE)) {
+        $respuesta['status'] = 'error';
+        $respuesta['message'] = _tr('Invalid or missing parameters');
+    } else {
+        $pUtils = new paloControlPanelUtils();
+        if (!$pUtils->queuePause($_REQUEST['interface'], $_REQUEST['paused'] === '1')) {
             $respuesta['status'] = 'error';
             $respuesta['message'] = $pUtils->errMsg;
         }

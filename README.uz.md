@@ -20,10 +20,14 @@ koʻrsatkichlari, uzoq kutish signali va qoʻngʻiroqlarni tinglash koʻrinadi.
   qaysi qiymatga eʼtibor berish kerakligini koʻrsatadi.
 - **Operatorlar**: holati, qabul qilgan qoʻngʻiroqlari soni va joriy holatda
   qancha vaqt turgani. Roʻyxat holat boʻyicha saralanadi (avval boʻshlar).
-  Uzoq pauza yoki uzoq suhbatda qator qizil rangga kiradi.
+  Uzoq pauza yoki uzoq suhbatda qator qizil rangga kiradi. Supervayzer
+  operatorni roʻyxatning oʻzidan pauzaga qoʻyishi yoki pauzadan chiqarishi
+  mumkin.
 - **Uzoq kutish signali**: kutayotgan mijozlar avval sariq, keyin qizil
   rangda belgilanadi. Brauzer vkladkasida kutayotganlar soni koʻrinadi.
   Xohishga koʻra ovozli signal va ish stolidagi bildirishnoma yoqiladi.
+- **Tablo rejimi**: operatorlar zalidagi televizor uchun toʻliq ekran
+  koʻrinishi: faqat navbatlar, yirik raqamlar, tugmalarsiz.
 - **Qoʻngʻiroqni tinglash**: operator suhbatini tinglash, unga maslahat berish
   yoki suhbatga aralashish. Asterisk sizning ichki yoki tashqi raqamingizga
   qoʻngʻiroq qiladi.
@@ -91,6 +95,7 @@ asterisk -rx "dialplan reload"
 | Tarmoqdagi / Tarmoqda boʻlmagan raqamlar | Roʻyxatdan oʻtgan va oʻtmagan ichki raqamlar |
 | Ovoz | Mijoz signal chegarasidan uzoqroq kutganda ovozli signal. Brauzer ovozga faqat bosishdan keyin ruxsat beradi, shuning uchun uni shu tugma bilan bir marta yoqing. Tanlov eslab qolinadi. |
 | Bildirishnomalar | Sahifa fonda boʻlganda uzoq kutish haqida ish stolida bildirishnoma. Faqat HTTPS orqali ochilganda bor. |
+| Tablo | Televizor uchun toʻliq ekran koʻrinishi, qarang: [Tablo rejimi](#tablo-rejimi). |
 | EN / RU / UZ | Ushbu brauzer uchun modul tili (cookieda saqlanadi). Til tanlanmagan boʻlsa, Issabel tili, modulda u til boʻlmasa ingliz tili ishlatiladi. |
 
 ### Navbat kartasi
@@ -130,6 +135,27 @@ holatdagi vaqt koʻrinadi:
 15 daqiqalik pauza yoki 10 daqiqalik suhbatdan keyin qator qizil rangga
 kiradi. *Operatorlar* yonidagi belgi holat yoki raqam boʻyicha saralashni
 almashtiradi.
+
+**Operatorni pauzaga qoʻyish.** Kursorni operator qatoriga olib boring va
+uning oxiridagi pauza belgisini bosing; pauzadagi operatorda «▶» belgisi
+doim koʻrinadi. Tasdiqlagandan keyin operator oʻzining **barcha**
+navbatlarida pauzaga qoʻyiladi (yoki pauzadan chiqariladi), xuddi uning
+telefonidagi pauza tugmasi kabi. Pauza sababi — «Supervayzer», shuning uchun
+qatorda pauzani kim qoʻyganini koʻrish mumkin.
+
+### Tablo rejimi
+
+![Tablo rejimi](docs/images/uz/wallboard.png)
+
+Holat qatoridagi **Tablo** tugmasi butun ekranda faqat navbatlarni
+koʻrsatadi: yirik raqamlar, tugmalarsiz. Oʻng yuqori burchakda soat va
+chiqish uchun × (yoki Esc tugmasi).
+
+Operatorlar zalidagi televizor uchun televizor brauzerida Issabelga kiring va
+modulni manzilga `&wallboard=1` qoʻshib oching, masalan
+`https://pbx/index.php?menu=control_panel&wallboard=1`. Sahifa darhol tablo
+rejimida ochiladi; toʻliq ekran uchun F11 ni bosing. Sahifa ochiq turganda
+Issabel sessiyasi tugamaydi.
 
 ### Qoʻngʻiroqni tinglash
 
@@ -202,7 +228,8 @@ sozlamasidir.
   almashtirishi yoki yakunlashi mumkin. Bu soʻrovlar orqali boshqa
   qoʻngʻiroqlarni uzib boʻlmaydi.
 - Biror narsani oʻzgartiradigan amallar (qoʻngʻiroqni uzish yoki boshlash,
-  tinglash, joylashuvni saqlash, statistikani tozalash) faqat modulning oʻz
+  tinglash, operatorni pauzaga qoʻyish, joylashuvni saqlash, statistikani
+  tozalash) faqat modulning oʻz
   sahifasidan yuborilgan POST soʻrovlar sifatida qabul qilinadi. Boshqa
   saytdagi havola yoki forma ularni tizimga kirgan foydalanuvchi nomidan
   bajara olmaydi (CSRF himoyasi).

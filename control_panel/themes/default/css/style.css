@@ -1104,3 +1104,101 @@ div.statusbar {
 }
 .cp-lang:hover { background: #eef2f4; color: #455a64; }
 .cp-lang.is-on { background: #2e7d32; color: #ffffff; cursor: default; }
+
+/* ---- Pause / unpause an agent (toggleAgentPause in javascript.js) ---- */
+.agent-pause {
+  flex: none;
+  margin-left: 4px;
+  padding: 1px 5px;
+  border-radius: 4px;
+  color: #b0bec5;
+  font-size: 11px;
+  cursor: pointer;
+  visibility: hidden;          /* shown on row hover, always when paused */
+}
+.q-agents-list .agent-container:hover .agent-pause,
+.agent-pause.is-paused { visibility: visible; }
+.agent-pause:hover { background: #fff8e1; color: #b28704; }
+.agent-pause.is-paused { color: #b28704; }
+.agent-pause.is-paused:hover { background: #eef7ee; color: #2e7d32; }
+.agent-pause.is-working { opacity: 0.4; pointer-events: none; }
+.agent-pause.is-none { visibility: hidden !important; pointer-events: none; }
+
+/* ---- TV mode (wallboard): html.cp-wallboard, see toggleWallboard() ---- */
+html.cp-wallboard,
+html.cp-wallboard body { overflow: hidden !important; }
+html.cp-wallboard #controlPanelApplication {
+  position: fixed;
+  top: 0; right: 0; bottom: 0; left: 0;
+  z-index: 9990;
+  overflow-y: auto;
+  padding: 14px 18px;
+  background: #eef3ef;
+}
+html.cp-wallboard .containerAll {
+  min-height: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  box-shadow: none;
+}
+html.cp-wallboard .left-container { display: none !important; }
+html.cp-wallboard .right-container { float: none; width: 100% !important; min-width: 0; }
+html.cp-wallboard .statusbar { padding-right: 150px; }
+html.cp-wallboard .statusbar > :not(.cp-conn) { display: none !important; }
+html.cp-wallboard .cp-conn { font-size: 17px; padding: 8px 16px; }
+html.cp-wallboard .q-reset,
+html.cp-wallboard .q-sort,
+html.cp-wallboard .agent-spy,
+html.cp-wallboard .agent-pause,
+html.cp-wallboard .cp-spy-bar { display: none !important; }
+
+html.cp-wallboard .operator-title-container { font-size: 20px; }
+html.cp-wallboard .q-card { margin-bottom: 18px; }
+html.cp-wallboard .q-head { padding: 12px 18px; }
+html.cp-wallboard .q-title { font-size: 26px; }
+html.cp-wallboard .q-name { font-size: 20px; }
+html.cp-wallboard .q-stats { gap: 12px; padding: 14px 18px; }
+html.cp-wallboard .q-stat { padding: 10px 18px; border-left-width: 6px; }
+html.cp-wallboard .q-stat-value,
+html.cp-wallboard .q-stat-kpi .q-stat-value { font-size: 46px; line-height: 1.1; }
+html.cp-wallboard .q-stat-label { font-size: 18px; }
+html.cp-wallboard .q-col { max-height: none; padding: 14px 18px; }
+html.cp-wallboard .q-col-title { font-size: 16px; margin-bottom: 10px; }
+html.cp-wallboard .q-empty { font-size: 18px; }
+html.cp-wallboard .q-agents-list .agent-container { gap: 10px; padding: 7px 0; font-size: 21px; }
+html.cp-wallboard .agent-dot { width: 14px; height: 14px; }
+html.cp-wallboard .agent-num { min-width: 52px; }
+html.cp-wallboard .agent-calls { font-size: 16px; padding: 1px 10px; border-radius: 12px; }
+html.cp-wallboard .agent-calls .fa { font-size: 14px; }
+html.cp-wallboard .agent-state { font-size: 19px; }
+html.cp-wallboard .q-caller { padding: 9px 14px; margin-bottom: 8px; font-size: 23px; }
+html.cp-wallboard .q-caller .fa { font-size: 20px; }
+html.cp-wallboard .q-caller-wait { font-size: 23px; }
+
+/* Clock and exit button in the top right corner of TV mode */
+.cp-wb-bar { display: none; }
+html.cp-wallboard .cp-wb-bar {
+  position: fixed;
+  top: 14px;
+  right: 18px;
+  z-index: 9995;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cp-wb-clock {
+  font-size: 30px;
+  font-weight: 700;
+  color: #37474f;
+  font-variant-numeric: tabular-nums;
+}
+.cp-wb-exit {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 18px;
+  color: #90a4ae;
+  cursor: pointer;
+  opacity: 0.5;
+}
+.cp-wb-exit:hover { opacity: 1; background: #ffffff; color: #c62828; }

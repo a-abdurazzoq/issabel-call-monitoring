@@ -69,6 +69,24 @@ $arrLangModule = array(
     "Queue %s"                      => "Navbat %s",
     "Sorted by state: free first. Click to sort by number" => "Holat boʻyicha saralangan: avval boʻshlar. Raqam boʻyicha saralash uchun bosing",
     "Sorted by number. Click to sort by state"             => "Raqam boʻyicha saralangan. Holat boʻyicha saralash uchun bosing",
+    "TV mode"
+        => "Tablo",
+    "Full-screen view for a TV in the call center room: queues only, large numbers, no buttons"
+        => "Operatorlar zalidagi televizor uchun toʻliq ekran koʻrinishi: faqat navbatlar, yirik raqamlar, tugmalarsiz",
+    "Exit TV mode"
+        => "Tablo rejimidan chiqish",
+    "Pause this agent in all queues"
+        => "Operatorni barcha navbatlarda pauzaga qoʻyish",
+    "Unpause this agent in all queues"
+        => "Operatorni barcha navbatlarda pauzadan chiqarish",
+    "Pause agent %s in all queues? The agent will stop getting queue calls."
+        => "%s operatorini barcha navbatlarda pauzaga qoʻyaylikmi? Unga navbatlardan qoʻngʻiroqlar kelmay qoladi.",
+    "Unpause agent %s in all queues? The agent will start getting queue calls."
+        => "%s operatorini barcha navbatlarda pauzadan chiqaraylikmi? Unga navbatlardan yana qoʻngʻiroqlar kela boshlaydi.",
+    "Supervisor"
+        => "Supervayzer",
+    "Failed to change the pause of the agent"
+        => "Operator pauzasini oʻzgartirib boʻlmadi",
 
     // Qoʻngʻiroqni tinglash (ChanSpy)
     "Listen to this agent"          => "Operatorni tinglash",
