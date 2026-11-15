@@ -1075,3 +1075,29 @@ div.statusbar {
 .cp-spy-bar-title { font-weight: 600; }
 .cp-spy-bar-state { font-size: 12px; color: #78909c; }
 .cp-spy-bar.is-live .cp-spy-bar-state { color: #2e7d32; }
+
+/* Language switcher (EN / RU / UZ) at the right end of the status bar */
+.cp-langs {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  height: 40px;
+  margin-left: auto;
+  padding: 0 6px 0 12px;
+  box-sizing: border-box;
+  border: 1px solid #dfe5ea;
+  border-radius: 20px;
+  background: #ffffff;
+  color: #78909c;
+  font-size: 12px;
+}
+.cp-langs .fa { margin-right: 4px; }
+.cp-lang {
+  padding: 4px 7px;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  user-select: none;
+}
+.cp-lang:hover { background: #eef2f4; color: #455a64; }
+.cp-lang.is-on { background: #2e7d32; color: #ffffff; cursor: default; }

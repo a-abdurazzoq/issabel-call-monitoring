@@ -1,9 +1,10 @@
 <?php
 /*
   English strings for the Call Monitoring (control_panel) module.
-  Issabel loads this file first and then merges the file for the user's
-  language (e.g. ru.lang) over it, so every key used by the module is listed
-  here.
+  This file is loaded first and the file of the module language (ru.lang,
+  uz.lang) is merged over it, so every key used by the module is listed here.
+  The module language is the one chosen in the switcher of the status bar,
+  otherwise the Issabel language.
 */
 global $arrLangModule;
 $arrLangModule = array(
@@ -127,6 +128,7 @@ $arrLangModule = array(
     "Old"                           => "Old",
     "Edit Name"                     => "Edit Name",
     "Save"                          => "Save",
+    "Language"                      => "Language",
     "Hide All"                      => "Hide All",
     "Show All"                      => "Show All",
 

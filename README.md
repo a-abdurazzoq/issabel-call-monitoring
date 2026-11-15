@@ -1,11 +1,11 @@
 # Issabel Call Monitoring
 
+**English** | [Русский](README.ru.md) | [Oʻzbekcha](README.uz.md)
+
 A real-time call monitoring panel for **Issabel 5**. It replaces the Operator
 Panel that was removed from Issabel 5 and is built for supervisors of small call
 centers: extensions and their calls, queues with agents and waiting customers,
 queue KPIs, long-wait alarms and call listening, on one page.
-
-[Русская версия](README.ru.md)
 
 ![Call Monitoring](docs/images/en/overview.png)
 
@@ -24,7 +24,9 @@ queue KPIs, long-wait alarms and call listening, on one page.
   notification fire when someone waits too long.
 - **Call listening**: listen to an agent's call, whisper to the agent or barge
   in. Asterisk calls you at your own extension or an external number.
-- **English and Russian** interface, chosen by the Issabel user's language.
+- **English, Russian and Uzbek** interface. The module follows the Issabel
+  language setting; the EN / RU / UZ buttons in the status bar switch it for
+  the current browser.
 
 ## Requirements
 
@@ -79,6 +81,7 @@ issabel-menuremove control_panel
 | Extensions Online / Offline | Registered and unregistered extensions |
 | Sound | Beep when a customer waits longer than the alarm time. Browsers allow sound only after a click, so turn it on once with this button. The choice is remembered. |
 | Notifications | Desktop notification for a long wait while the page is in the background. Shown only on HTTPS. |
+| EN / RU / UZ | Module language for this browser (a cookie). Without a choice the Issabel language is used, or English if Issabel uses a language the module doesn't have. |
 
 ### Queue card
 

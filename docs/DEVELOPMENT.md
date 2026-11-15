@@ -26,8 +26,8 @@ control_panel/              the module, copied to /var/www/html/modules/control_
     panel.tpl               Smarty template with the Handlebars templates inside
     js/javascript.js        Ember application and all page logic
     css/style.css           styles
-  lang/en.lang, ru.lang     UI strings
-  help/en.hlp, ru.hlp       built-in help (the "?" button in Issabel)
+  lang/en, ru, uz .lang     UI strings (en.lang holds every key)
+  help/en, ru, uz .hlp      built-in help (the "?" button in Issabel)
   images/                   icons used by the page
 docs/                       documentation and screenshots
 ```
@@ -144,8 +144,20 @@ backed by `paloControlPanelUtils::spy*`.
 
 ## Strings and languages
 
+- The module speaks English, Russian and Uzbek (Latin script, with `ʻ` U+02BB
+  in `oʻ`/`gʻ` and `ʼ` U+02BC as the apostrophe).
 - `lang/en.lang` holds **every** key. Issabel loads it first and merges the
-  user's language file (`ru.lang`) over it. Add every new string to both files.
+  file of the system language over it. Add every new string to all the lang
+  files (`en`, `ru`, `uz`).
+- Issabel's language is a system-wide setting, and its list of languages has no
+  Uzbek. So the module has its own switcher (EN / RU / UZ in the status bar):
+  - `setModuleLanguage()` in JavaScript stores the choice in the `cp_lang`
+    cookie and reloads the page.
+  - `_applyModuleLanguage()` in `index.php` runs after
+    `load_language_module()`. If the cookie is set, it loads `en.lang` again,
+    merges the chosen file over it and replaces the module strings.
+  - Without the cookie, `_currentModuleLanguage()` uses Issabel's language if
+    the module has it, otherwise English.
 - No UI text directly in `panel.tpl` or JavaScript:
   - Template strings are Smarty variables `LBL_*`.
   - JavaScript strings come from `arrLang_main` (`ARRLANG_MAIN` in `index.php`)
@@ -157,8 +169,19 @@ backed by `paloControlPanelUtils::spy*`.
 - Panel titles are stored in SQLite (`area.description`) and translated with
   `_tr()`. The keys `Area 1`…`Area 9`, `Extensions`, `Queues` and so on are in
   the lang files.
-- To add a language, copy `ru.lang` to `<code>.lang`, translate the values
-  and add `help/<code>.hlp`.
+- To add a language:
+  1. Copy `en.lang` to `lang/<code>.lang` and translate the values.
+  2. Add `help/<code>.hlp`.
+  3. Add the code to `_moduleLanguages()` in `index.php` so that it appears in
+     the switcher.
+  4. Add a `README.<code>.md` and the screenshots in `docs/images/<code>/`, and
+     a link to it in the language bar at the top of every README.
+
+The help window is served by Issabel itself (`help/frameRight.php`), which picks
+`help/<lang>.hlp` by the Issabel system language, not by the module switcher.
+Issabel's language list has no Uzbek, so `help/uz.hlp` is shown only if `uz` is
+added to that list and selected in Issabel; otherwise the help is in the
+Issabel language or in English.
 
 ## Conventions
 

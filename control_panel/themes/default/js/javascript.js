@@ -2337,3 +2337,11 @@ function renderSpyBar() {
     markSpyMode(bar, s.mode);
     $(bar).find('.cp-spy-mode, .cp-spy-btn-stop').prop('disabled', s.ended);
 }
+
+// Language switcher of the status bar: remembered per browser in a cookie
+// read by index.php (_applyModuleLanguage), then the page is reloaded.
+function setModuleLanguage(code) {
+    if (!/^[a-z]{2}$/.test(code)) return;
+    document.cookie = 'cp_lang=' + code + '; path=/; max-age=31536000; SameSite=Lax';
+    location.reload();
+}

@@ -1,0 +1,147 @@
+<?php
+/*
+  Call Monitoring (control_panel) modulining oʻzbekcha matnlari (lotin yozuvi).
+  Holat qatoridagi til tanlagichida UZ tanlanganda ishlatiladi; bu yerda
+  boʻlmagan kalitlar en.lang faylidan olinadi.
+*/
+global $arrLangModule;
+$arrLangModule = array(
+    // Modul nomi
+    "Control Panel"                 => "Qoʻngʻiroqlar monitoringi",
+
+    // Panel sarlavhalari (area jadvalida saqlanadi, _tr() orqali tarjima qilinadi)
+    "Extensions"                    => "Ichki raqamlar",
+    "Queues"                        => "Navbatlar",
+    "Conferences"                   => "Konferensiyalar",
+    "Parking lots"                  => "Qoʻngʻiroqlar parkovkasi",
+    "SIP/IAX Trunks"                => "SIP/IAX trunklar",
+    "DAHDI Trunks"                  => "DAHDI trunklar",
+    "Area 1"                        => "Hudud 1",
+    "Area 2"                        => "Hudud 2",
+    "Area 3"                        => "Hudud 3",
+    "Area 4"                        => "Hudud 4",
+    "Area 5"                        => "Hudud 5",
+    "Area 6"                        => "Hudud 6",
+    "Area 7"                        => "Hudud 7",
+    "Area 8"                        => "Hudud 8",
+    "Area 9"                        => "Hudud 9",
+
+    // Holat qatori
+    "Connected"                     => "Ulangan",
+    "Connecting..."                 => "Ulanmoqda...",
+    "Extensions Online"             => "Tarmoqdagi raqamlar",
+    "Extensions Offline"            => "Tarmoqda boʻlmagan raqamlar",
+
+    // Navbat kartasi
+    "Queue"                         => "Navbat",
+    "Reset statistics"              => "Statistikani tozalash",
+    "Answered"                      => "Javob berilgan",
+    "Abandoned"                     => "Oʻtkazib yuborilgan",
+    "Agents"                        => "Operatorlar",
+    "Customers in Queue"            => "Navbatdagi mijozlar",
+    "Members"                       => "Aʼzolar",
+    "Not Attended"                  => "Xizmat koʻrsatilmayapti",
+    "Callers"                       => "Qoʻngʻiroq qiluvchilar",
+    "No Callers"                    => "Hech kim kutmayapti",
+    "Waiting"                       => "Kutmoqda",
+    "Longest wait"                  => "Eng uzoq kutish",
+    "Abandon rate"                  => "Oʻtkazib yuborilganlar %",
+    "Avg wait"                      => "Oʻrt. kutish",
+    "Avg talk"                      => "Oʻrt. suhbat",
+    "sec"                           => "s",
+    "Share of calls answered within the service level time" => "Belgilangan vaqt (Service Level) ichida javob berilgan qoʻngʻiroqlar ulushi",
+    "Running average since the last statistics reset"       => "Statistika oxirgi marta tozalangandan beri hisoblangan oʻrtacha qiymat",
+    "Calls taken since the last statistics reset"           => "Statistika oxirgi marta tozalangandan beri qabul qilingan qoʻngʻiroqlar",
+    "Sound"                         => "Ovoz",
+    "Sound alert is on: beep when a caller waits longer than %s s"
+        => "Ovozli signal yoqilgan: mijoz %s s dan ortiq kutsa, signal chalinadi",
+    "Sound alert is off. Click to beep when a caller waits longer than %s s"
+        => "Ovozli signal oʻchirilgan. Mijoz %s s dan ortiq kutganda signal olish uchun bosing",
+    "No agents"                     => "Operatorlar yoʻq",
+    "Notifications"                 => "Bildirishnomalar",
+    "Desktop notifications are on: shown when a caller waits longer than %s s and this page is in the background"
+        => "Bildirishnomalar yoqilgan: mijoz %s s dan ortiq kutsa va bu sahifa fonda boʻlsa, koʻrsatiladi",
+    "Desktop notifications are off. Click to get a notification when a caller waits longer than %s s"
+        => "Bildirishnomalar oʻchirilgan. Mijoz %s s dan ortiq kutganda bildirishnoma olish uchun bosing",
+    "Notifications are blocked for this site in the browser settings."
+        => "Bu sayt uchun bildirishnomalar brauzer sozlamalarida taqiqlangan.",
+    "Caller waiting %s"             => "Mijoz %s kutmoqda",
+    "Queue %s"                      => "Navbat %s",
+    "Sorted by state: free first. Click to sort by number" => "Holat boʻyicha saralangan: avval boʻshlar. Raqam boʻyicha saralash uchun bosing",
+    "Sorted by number. Click to sort by state"             => "Raqam boʻyicha saralangan. Holat boʻyicha saralash uchun bosing",
+
+    // Qoʻngʻiroqni tinglash (ChanSpy)
+    "Listen to this agent"          => "Operatorni tinglash",
+    "Listen to agent %s"            => "%s operatorini tinglash",
+    "Call me at"                    => "Sizga qaysi raqamga qoʻngʻiroq qilaylik",
+    "Your extension or external number" => "Ichki yoki tashqi raqamingiz",
+    "Recent numbers"                => "Soʻnggi raqamlar",
+    "Numbers you call will be remembered here" => "Siz foydalangan raqamlar shu yerda saqlanadi",
+    "Remove"                        => "Oʻchirish",
+    "Listen"                        => "Tinglash",
+    "Whisper"                       => "Maslahat berish",
+    "Barge in"                      => "Aralashish",
+    "You hear the agent and the customer, nobody hears you" => "Siz operator va mijozni eshitasiz, sizni hech kim eshitmaydi",
+    "Only the agent hears you"      => "Sizni faqat operator eshitadi",
+    "Three-way call: both hear you" => "Uch kishilik suhbat: sizni ikkalasi ham eshitadi",
+    "During the call the mode can also be switched with the phone keys: 4 listen, 5 whisper, 6 barge in"
+        => "Tinglash vaqtida rejimni telefon tugmalari bilan ham almashtirish mumkin: 4 — tinglash, 5 — maslahat berish, 6 — aralashish",
+    "Call me"                       => "Menga qoʻngʻiroq qiling",
+    "Cancel"                        => "Bekor qilish",
+    "Hang up"                       => "Yakunlash",
+    "Listening to %s"               => "Tinglash: %s",
+    "Calling %s…"                   => "%s raqamiga qoʻngʻiroq qilinmoqda…",
+    "Call connected"                => "Aloqada",
+    "Ended"                         => "Yakunlandi",
+    "Enter a number: digits, *, # or a leading + (2-20 characters)"
+        => "Raqam kiriting: raqamlar, *, # yoki boshida + (2–20 belgi)",
+    "Failed to start listening"     => "Tinglashni boshlab boʻlmadi",
+    "The agent is not in a call anymore" => "Operator endi suhbatlashmayapti",
+    "This Asterisk version cannot switch the mode during the call. Call you again in the new mode? (You can also press 4/5/6 on the phone.)"
+        => "Asteriskning bu versiyasi qoʻngʻiroq vaqtida rejimni almashtira olmaydi. Sizga yangi rejimda qayta qoʻngʻiroq qilaylikmi? (Telefonda 4/5/6 tugmalarini ham bosishingiz mumkin.)",
+    "Invalid agent"                 => "Operator raqami notoʻgʻri",
+    "Invalid number"                => "Raqam notoʻgʻri",
+    "Enter your own number, not the agent's" => "Operator raqamini emas, oʻz raqamingizni kiriting",
+    "The agent has no phone device" => "Operatorning telefon qurilmasi yoʻq",
+    "The listening call has ended"  => "Tinglash qoʻngʻirogʻi allaqachon yakunlangan",
+    "Failed to switch the listening mode" => "Tinglash rejimini almashtirib boʻlmadi",
+
+    // Navbat operatorlarining holatlari
+    "Available"                     => "Boʻsh",
+    "In use"                        => "Suhbatlashmoqda",
+    "Busy"                          => "Band",
+    "Invalid"                       => "Notoʻgʻri qurilma",
+    "Unavailable"                   => "Ulanmagan",
+    "Ringing"                       => "Jiringlamoqda",
+    "Ringing, in use"               => "Jiringlamoqda, band",
+    "On Hold"                       => "Kutishda",
+    "Paused"                        => "Pauzada",
+
+    // Boshqa panellar
+    "Participant(s)"                => "Ishtirokchi(lar)",
+    "Parked"                        => "Parkovkada",
+    "idle"                          => "boʻsh",
+    "ext"                           => "raq.",
+    "New"                           => "Yangi",
+    "Old"                           => "Eski",
+    "Edit Name"                     => "Nomini oʻzgartirish",
+    "Save"                          => "Saqlash",
+    "Language"                      => "Til",
+    "Hide All"                      => "Hammasini yashirish",
+    "Show All"                      => "Hammasini koʻrsatish",
+
+    // Xatolar
+    "Error when connecting to Asterisk Manager"         => "Asterisk Managerga ulanishda xatolik",
+    "Invalid or missing parameters"                     => "Parametrlar notoʻgʻri yoki yetishmayapti",
+    "Unimplemented method"                              => "Bu metod amalga oshirilmagan",
+    "Invalid source for call"                           => "Qoʻngʻiroq manbasi notoʻgʻri",
+    "Invalid target for call"                           => "Qoʻngʻiroq manzili notoʻgʻri",
+    "No active channels for target"                     => "Raqamda faol kanallar yoʻq",
+    "Failed to query dialchannel for source extension"  => "Manba raqami uchun terish kanalini olib boʻlmadi",
+    "(internal) Failed to list channels"                => "(ichki xato) Kanallar roʻyxatini olib boʻlmadi",
+    "(internal) Failed to hangup active channel for target" => "(ichki xato) Raqamning faol kanalini yakunlab boʻlmadi",
+    "Invalid queue"                                     => "Navbat notoʻgʻri",
+    "Failed to reset queue statistics"                  => "Navbat statistikasini tozalab boʻlmadi",
+    "Request rejected: it must be sent from the Call Monitoring page" => "Soʻrov rad etildi: u «Qoʻngʻiroqlar monitoringi» sahifasidan yuborilishi kerak",
+);
+?>

@@ -35,6 +35,7 @@ function _moduleContent(&$smarty, $module_name)
 
 
     load_language_module($module_name);
+    _applyModuleLanguage($module_name);
 
     global $arrConf;
     global $arrConfModule;
@@ -72,6 +73,58 @@ function _moduleContent(&$smarty, $module_name)
             $h = 'handleJSON_unimplemented';
     }        
     return call_user_func($h, $smarty, $module_name, $local_templates_dir);
+}
+
+/* Module language.
+ *
+ * Issabel has one language for the whole system and its list has no Uzbek.
+ * The language switcher of the page (EN / RU / UZ) stores the choice in the
+ * cp_lang cookie of the browser; without it the module follows the Issabel
+ * language. lang/en.lang holds every key, the chosen file is merged over it. */
+function _moduleLanguages()
+{
+    return array('en' => 'EN', 'ru' => 'RU', 'uz' => 'UZ');
+}
+
+function _currentModuleLanguage()
+{
+    $languages = _moduleLanguages();
+    if (isset($_COOKIE['cp_lang']) && is_string($_COOKIE['cp_lang']) && isset($languages[$_COOKIE['cp_lang']]))
+        return $_COOKIE['cp_lang'];
+    $lang = get_language();
+    return isset($languages[$lang]) ? $lang : 'en';
+}
+
+// EN / RU / UZ buttons of the status bar (setModuleLanguage() in javascript.js)
+function _languageSwitchHTML()
+{
+    $current = _currentModuleLanguage();
+    $html = '';
+    foreach (_moduleLanguages() as $code => $label) {
+        $html .= '<span class="cp-lang'.($code == $current ? ' is-on' : '').
+            '" onclick="setModuleLanguage(\''.$code.'\')">'.$label.'</span>';
+    }
+    return $html;
+}
+
+function _applyModuleLanguage($module_name)
+{
+    global $arrLang, $arrLangModule;
+
+    if (!isset($_COOKIE['cp_lang'])) return;    // load_language_module() already used the Issabel language
+    $lang = _currentModuleLanguage();
+    $dir = "modules/$module_name/lang";
+
+    $arrLangModule = array();
+    include "$dir/en.lang";
+    $strings = $arrLangModule;
+    if ($lang != 'en' && file_exists("$dir/$lang.lang")) {
+        $arrLangModule = array();
+        include "$dir/$lang.lang";
+        $strings = array_merge($strings, $arrLangModule);
+    }
+    $arrLangModule = $strings;
+    $arrLang = array_merge(is_array($arrLang) ? $arrLang : array(), $strings);
 }
 
 /* Protection against cross-site request forgery (CSRF).
@@ -174,6 +227,8 @@ function handleHTML_mainReport($smarty, $module_name, $local_templates_dir)
         'LBL_SLA_TITLE'             =>  _tr('Share of calls answered within the service level time'),
         'LBL_AVG_TITLE'             =>  _tr('Running average since the last statistics reset'),
         'LBL_SOUND'                 =>  _tr('Sound'),
+        'LBL_LANGUAGE'              =>  _tr('Language'),
+        'CP_LANG_SWITCH'            =>  _languageSwitchHTML(),
         'LBL_NOTIFY'                =>  _tr('Notifications'),
         'LBL_EXT_SHORT'             =>  _tr('ext'),
         'LBL_IDLE'                  =>  _tr('idle'),
